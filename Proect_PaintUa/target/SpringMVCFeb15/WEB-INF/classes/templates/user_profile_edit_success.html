@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="ISO-8859-1">
+        <title>User profile editing result</title>
+    </head>
+    <body>
+        <h2>User edited successfully</h2>
+        <a th:href="@{/view/profile/{id}(id=${updatedUser.id})}">Go to Profile</a>
+    </body>
+</html>

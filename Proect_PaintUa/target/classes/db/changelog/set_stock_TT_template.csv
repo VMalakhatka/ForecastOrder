@@ -1,0 +1,3 @@
+﻿id;id_tt;name_tt;id_stock;name_stock;role;is_min;is_max;is_fasovka;template_id
+1;1;Kiev Olymp;1;Kiev;PT;true;true;true;1
+2;1;Kiev Olymp;19;Kiev Rasprodaga;PT;false;true;false;1

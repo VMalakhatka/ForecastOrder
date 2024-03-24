@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="ISO-8859-1">
+        <title>User registration result</title>
+    </head>
+    <body>
+        <h2>User registered successfully</h2>
+        <p>You can confirm your email. The further information was sent to <b><span th:text = "${newUser.email()}"></span></b></p>
+        <a th:href="@{/view/profile/{id}(id=${newUser.id})}">Go to Profile</a>
+    </body>
+</html>

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>User welcome form</title>
+</head>
+<body>
+<h2>Your order is accepted!</h2>
+<p th:object="${guestDto}">
+    Dear
+<spa th:text="*{name}"></spa>
+    , your id is
+    <span th:text="*{id}"></span>
+</p>
+</body>
+</html>

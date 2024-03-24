@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="Load data from CSV file 2" author="Malakhatka">
+    <loadData tableName="template" file="db/changelog/template.csv" separator=";">
+        <column name="id" header="id" />
+        <column name="end_analysis" header="end_analysis" type="DATA"/>
+        <column name="start_analysis" header="start_analysis" type="DATA"/>
+        <column name="order_for_day" header="order_for_day" />
+        <column name="name" header="name" />
+        <column name="type" header="type" />
+        <column name="koef_to_real_sale" header="koef_to_real_sale" />
+    </loadData>
+</changeSet>
+
+    <changeSet id="Load data from CSV file with DATA description" author="Malakhatka">
+        <loadData tableName="template" file="db/changelog/template2.csv" separator=";">
+            <column name="end_analysis" header="end_analysis" type="DATA"/>
+            <column name="start_analysis" header="start_analysis" type="DATA"/>
+        </loadData>
+    </changeSet>
+
+    <changeSet id="Load data from CSV file set_stock_TT_template" author="Malakhatka">
+        <loadData tableName="set_stock_tt_template" file="db/changelog/set_stock_TT_template.csv" separator=";">
+        </loadData>
+    </changeSet>
+
+    <changeSet id="Load data from CSV file stock_tip_sale_templete" author="Malakhatka">
+        <loadData tableName="stock_tip_sale_templete" file="db/changelog/stock_tip_sale_templete.csv" separator=";">
+        </loadData>
+    </changeSet>
+
+
+<!--    <changeSet id="d30a10e7-aa5c-4339-b0c9-7406f2766aec" author="Jim Carrey">  &lt;!&ndash;Идентификатор и автор изменения&ndash;&gt;-->
+<!--        <update tableName="USERS">-->
+<!--            <column name="BIRTH_DATE" value="to_date('31.12.2002', 'dd.mm.yyyy')"/>-->
+<!--            <column name="NICKNAME" value="LongFruit"/>-->
+<!--            <where>ID = 9</where>-->
+<!--        </update>-->
+<!--        <update tableName="USERS">-->
+<!--            <column name="BIRTH_DATE" value="to_date('01.03.2013', 'dd.mm.yyyy')"/>-->
+<!--            <column name="NICKNAME" value="ShortBerry"/>-->
+<!--            <where>ID = 10</where>-->
+<!--        </update>-->
+<!--        <rollback/>-->
+<!--    </changeSet>-->
+
+<!--    <changeSet id="23dd8fe6-92a9-4a96-9e56-ccab5b1b12d4" author="${author}">  &lt;!&ndash;пользователь БД будет указан автором&ndash;&gt;-->
+<!--        <insert tableName="GOODS_ITEMS">-->
+<!--            <column name="PRICE" valueNumeric="100"/>-->
+<!--            <column name="DESCRIPTION" value="Super gadget can make you happy"/>-->
+<!--            <column name="ITEM_NAME" value="Super gadget"/>-->
+<!--        </insert>-->
+<!--        <insert tableName="GOODS_ITEMS">-->
+<!--            <column name="PRICE" valueNumeric="50"/>-->
+<!--            <column name="DESCRIPTION" value="Trim your body"/>-->
+<!--            <column name="ITEM_NAME" value="Trimmer"/>-->
+<!--        </insert>-->
+<!--    </changeSet>-->
+
+</databaseChangeLog>
