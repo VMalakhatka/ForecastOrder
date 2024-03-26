@@ -13,6 +13,7 @@ import org.example.entity.templates.SetStockTtTemplate;
 import org.example.entity.templates.StockTipSaleTemplate;
 import org.example.entity.templates.Template;
 import org.example.exeption.DataNotValid;
+import org.example.exeption.NotEnoughData;
 import org.example.exeption.NotFindByID;
 import org.example.repository.forecast.ForecastTemplateRepository;
 import org.example.repository.templates.TemplateRepository;
@@ -69,7 +70,11 @@ public class MakeForecastOnSupplierService {
         ForecastTemplate forecastTemplate=
                 saveTemplateToForecast(templateOptional.orElse(null),supplier);
         ForecastTemplate forecastTemplateSaved =forecastTemplateRepository.save(forecastTemplate);
-        fromExternalDatabaseServise.saveListOfGoodsBySupplier(forecastTemplateSaved);
+        try {
+            fromExternalDatabaseServise.saveListOfGoodsBySupplier(forecastTemplateSaved);
+        } catch (NotEnoughData e) {
+            throw new RuntimeException(e);
+        }
         fromExternalDatabaseServise.saveListOfChildForForecast(forecastTemplateSaved);
         fromExternalDatabaseServise.saveListOfMoveForForecast(forecastTemplateSaved);
         fromExternalDatabaseServise.saveListOfRestForForecast(forecastTemplateSaved);

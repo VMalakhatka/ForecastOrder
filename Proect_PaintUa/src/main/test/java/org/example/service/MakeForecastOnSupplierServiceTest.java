@@ -11,6 +11,7 @@ import org.example.entity.templates.Template;
 import org.example.entity.templates.entity_enum.StockRole;
 import org.example.entity.templates.entity_enum.TypDocmPr;
 import org.example.exeption.DataNotValid;
+import org.example.exeption.NotEnoughData;
 import org.example.repository.forecast.ForecastTemplateRepository;
 import org.example.repository.templates.TemplateRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -150,7 +151,7 @@ class MakeForecastOnSupplierServiceTest {
     }
 
     @Test
-    void testCountingData() throws DataNotValid {
+    void testCountingData() throws DataNotValid, NotEnoughData {
         LocalDateTime end=LocalDateTime.of(2024,2, 20,0,0);
         LocalDateTime start=LocalDateTime.of(2024,3, 19,0,0);
         template.setEndAnalysis(end);

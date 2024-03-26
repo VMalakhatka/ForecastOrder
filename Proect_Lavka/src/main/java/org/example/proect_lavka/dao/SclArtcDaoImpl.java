@@ -9,11 +9,11 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class SclArtcImpl implements SclArtcDao{
+public class SclArtcDaoImpl implements SclArtcDao{
 
     private final JdbcTemplate jdbcTemplate;
     @Autowired
-    public SclArtcImpl(JdbcTemplate jdbcTemplate) {
+    public SclArtcDaoImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
   //      System.out.println(getAllBySupplierAndStockId("Kreul",1));
     }
