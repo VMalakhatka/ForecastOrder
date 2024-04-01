@@ -1,2 +1,2 @@
-﻿id;end_analysis;start_analysis;order_for_day;name;type;koef_to_real_sale
-1;2024-2-20 0:0:0;2024-3-19 0:0:0;30;Kiev Olymp;SUPPLIER;1.5
+﻿id;end_analysis;start_analysis;order_for_day;name;type;koef_to_real_sale;id_main_stock
+1;2024-3-19 0:0:0;2024-2-20 0:0:0;30;Kiev Olymp;SUPPLIER;1.5;1

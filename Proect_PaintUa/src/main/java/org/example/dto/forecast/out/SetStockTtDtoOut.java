@@ -1,7 +1,6 @@
 package org.example.dto.forecast.out;
 
-import org.example.dto.template.out.StockTipSaleTemplateOutDTO;
-import org.example.entity.templates.entity_enum.StockRole;
+import org.example.entity.entity_enum.StockRole;
 
 import java.util.List;
 

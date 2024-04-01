@@ -4,6 +4,24 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <!--    <changeSet id="Load data from CSV file with DATA description" author="Malakhatka">-->
+    <!--        <loadData tableName="template" file="db/changelog/template2.csv" separator=";">-->
+    <!--            <column name="end_analysis" header="end_analysis" type="DATA"/>-->
+    <!--            <column name="start_analysis" header="start_analysis" type="DATA"/>-->
+    <!--        </loadData>-->
+    <!--    </changeSet>-->
+
+
+    <changeSet id="create_sequence" author="Malakhatka">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sequenceExists sequenceName="assemble_sequence"/>
+            </not>
+        </preConditions>
+        <sql>
+            CREATE SEQUENCE assemble_sequence START 1;
+        </sql>
+    </changeSet>
 
     <changeSet id="Load data from CSV file 2" author="Malakhatka">
     <loadData tableName="template" file="db/changelog/template.csv" separator=";">
@@ -17,12 +35,7 @@ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
     </loadData>
 </changeSet>
 
-    <changeSet id="Load data from CSV file with DATA description" author="Malakhatka">
-        <loadData tableName="template" file="db/changelog/template2.csv" separator=";">
-            <column name="end_analysis" header="end_analysis" type="DATA"/>
-            <column name="start_analysis" header="start_analysis" type="DATA"/>
-        </loadData>
-    </changeSet>
+
 
     <changeSet id="Load data from CSV file set_stock_TT_template" author="Malakhatka">
         <loadData tableName="set_stock_tt_template" file="db/changelog/set_stock_TT_template.csv" separator=";">

@@ -14,6 +14,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitConfig {
     public static final String QUEUE_NAME = "myQueue";
+    public static final String QUEUE_FOR_MOVE = "MoveQueue";
+    public static final String QUEUE_FOR_REST = "RestQueue";
+    public static final String QUEUE_FOR_SOCK_PARAM = "StockParamQueue";
+    public static final String QUEUE_FOR_ASSEMBLE = "AssembleQueue";
 
     @Bean
     public ConnectionFactory connectionFactory() {
@@ -45,10 +49,61 @@ public class RabbitConfig {
     }
 
     @Bean
-    public SimpleMessageListenerContainer messageListenerContainer() {
+    public SimpleMessageListenerContainer goodsListenerContainer() {
         SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
         container.setConnectionFactory(connectionFactory());
         container.setQueueNames(QUEUE_NAME);
+        return container;
+    }
+
+    @Bean
+    public Queue moveQueue() {
+        return new Queue(QUEUE_FOR_MOVE);
+    }
+
+    @Bean
+    public SimpleMessageListenerContainer moveListenerContainer() {
+        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
+        container.setConnectionFactory(connectionFactory());
+        container.setQueueNames(QUEUE_FOR_MOVE);
+        return container;
+    }
+    @Bean
+    public Queue restQueue() {
+        return new Queue(QUEUE_FOR_REST);
+    }
+
+    @Bean
+    public SimpleMessageListenerContainer restListenerContainer() {
+        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
+        container.setConnectionFactory(connectionFactory());
+        container.setQueueNames(QUEUE_FOR_REST);
+        return container;
+    }
+
+    @Bean
+    public Queue stockParamQueue() {
+        return new Queue(QUEUE_FOR_SOCK_PARAM);
+    }
+
+    @Bean
+    public SimpleMessageListenerContainer stockParamListenerContainer() {
+        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
+        container.setConnectionFactory(connectionFactory());
+        container.setQueueNames(QUEUE_FOR_SOCK_PARAM);
+        return container;
+    }
+
+    @Bean
+    public Queue assemblekParamQueue() {
+        return new Queue(QUEUE_FOR_ASSEMBLE);
+    }
+
+    @Bean
+    public SimpleMessageListenerContainer assembleParamListenerContainer() {
+        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
+        container.setConnectionFactory(connectionFactory());
+        container.setQueueNames(QUEUE_FOR_ASSEMBLE);
         return container;
     }
 }

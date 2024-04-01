@@ -1,22 +1,6 @@
 package org.example.service;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.TypedQuery;
-import org.example.entity.data_from_db.GoodsMove;
-import org.example.entity.forecast.ForecastTemplate;
-import org.example.entity.forecast.SetStockTT;
-import org.example.entity.forecast.StockTipSale;
-import org.example.entity.templates.entity_enum.StockRole;
 import org.springframework.stereotype.Service;
-
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 
 @Service
 public class CountingService {

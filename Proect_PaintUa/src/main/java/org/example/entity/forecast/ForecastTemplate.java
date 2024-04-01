@@ -1,10 +1,11 @@
 package org.example.entity.forecast;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.example.entity.data_from_db.Goods;
-import org.example.entity.forecast.entity_enum.TypeOfForecast;
+import org.example.entity.entity_enum.TypeOfForecast;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -38,6 +39,9 @@ public class ForecastTemplate {
     @Column(name = "supplier ")
     @Size(max = 50)
     private String supplier;
+    @Column(name = "id_main_stock")
+    @Min(1)
+    private long idMainStock;
     @OneToMany(
             mappedBy = "forecastTemplate",
             cascade = CascadeType.ALL,

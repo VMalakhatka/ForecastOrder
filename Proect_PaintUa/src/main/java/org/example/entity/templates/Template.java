@@ -1,6 +1,7 @@
 package org.example.entity.templates;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -33,6 +34,9 @@ public class Template {
     private String type;
     @Column(name = "koef_to_real_sale ")
     private double koefToRealSale;
+    @Column(name = "id_main_stock")
+    @Min(1)
+    private long idMainStock;
     @OneToMany(mappedBy = "template",
             cascade = CascadeType.ALL,
             orphanRemoval = true
@@ -46,4 +50,6 @@ public class Template {
         setStockTtTemplates.remove(set);
         set.setTemplate(null);
     }
+
+
 }

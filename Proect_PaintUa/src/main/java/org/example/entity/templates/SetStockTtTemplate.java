@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.example.entity.templates.entity_enum.StockRole;
+import org.example.entity.entity_enum.StockRole;
 
 import java.util.HashSet;
 import java.util.Set;

@@ -4,12 +4,12 @@ import org.example.entity.data_from_db.*;
 import org.example.entity.forecast.Forecast;
 import org.example.entity.forecast.ForecastTemplate;
 import org.example.entity.forecast.SetStockTT;
-import org.example.entity.forecast.entity_enum.TypeOfForecast;
+import org.example.entity.entity_enum.TypeOfForecast;
 import org.example.entity.templates.SetStockTtTemplate;
 import org.example.entity.templates.StockTipSaleTemplate;
 import org.example.entity.templates.Template;
-import org.example.entity.templates.entity_enum.StockRole;
-import org.example.entity.templates.entity_enum.TypDocmPr;
+import org.example.entity.entity_enum.StockRole;
+import org.example.entity.entity_enum.TypDocmPr;
 import org.example.exeption.DataNotValid;
 import org.example.exeption.NotEnoughData;
 import org.example.repository.forecast.ForecastTemplateRepository;
@@ -132,6 +132,7 @@ class MakeForecastOnSupplierServiceTest {
         template.setName(nameTT);
         template.setType(type);
         template.setKoefToRealSale(koef);
+        template.setIdMainStock(KievId);
         Mockito.when(templateRepository.findById(1L)).thenReturn(Optional.of(template));
         Mockito.when(forecastTemplateRepository.save(any(ForecastTemplate.class))).thenAnswer(invocation -> {
             ForecastTemplate fT=invocation.getArgument(0);
@@ -228,7 +229,7 @@ class MakeForecastOnSupplierServiceTest {
 
 
     @Test
-    void testRunDataSetValid() throws DataNotValid {
+    void testRunDataSetValid() throws DataNotValid, NotEnoughData {
         forecastTemplate = makeForecastOnSupplierService.run(1L, supp);
         assertEquals(forecastTemplate.getStartAnalysis().getDayOfMonth(), LocalDateTime.now().getDayOfMonth());
         assertThrows(DataNotValid.class,()->makeForecastOnSupplierService.run(2L, supp),
@@ -236,7 +237,7 @@ class MakeForecastOnSupplierServiceTest {
     }
 
     @Test
-    void testRunForecastTemplateFullCopyVerify() throws DataNotValid {
+    void testRunForecastTemplateFullCopyVerify() throws DataNotValid, NotEnoughData {
         LocalDateTime end=LocalDateTime.of(2023,10, 29,0,0);
         LocalDateTime start=LocalDateTime.of(2023,10, 1,0,0);
         template.setEndAnalysis(end);

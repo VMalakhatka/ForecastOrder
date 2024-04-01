@@ -1,4 +1,4 @@
-package org.example.entity.forecast.entity_enum;
+package org.example.entity.entity_enum;
 
 public enum TypeOfForecast {
     IMPORT,

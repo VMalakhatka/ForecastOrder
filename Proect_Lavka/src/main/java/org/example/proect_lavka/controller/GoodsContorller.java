@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 import org.example.proect_lavka.entity.SclArtc;
 import org.example.proect_lavka.entity.SclMove;
-import org.example.proect_lavka.service.GoodsService;
+import org.example.proect_lavka.client_rabbit.GoodsClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -20,10 +20,10 @@ import java.util.List;
 @RestController
 public class GoodsContorller {
 
-    GoodsService goodsService;
+    GoodsClient goodsClient;
     @Autowired
-    public GoodsContorller(GoodsService goodsService) {
-        this.goodsService = goodsService;
+    public GoodsContorller(GoodsClient goodsClient) {
+        this.goodsClient = goodsClient;
     }
 
     @GetMapping("{supp}/by_stock/{id}")
@@ -35,7 +35,7 @@ public class GoodsContorller {
                                              @Size(min = 1,max = 8) String supp,
                                                       @PathVariable("id") @Min(0)
                                             @Parameter(description = "the stock ID") long id){
-        return goodsService.getGoodsBySupplierAndStockId(supp,id);
+        return goodsClient.getGoodsBySupplierAndStockId(supp,id);
     }
 
     @PostMapping("/move/{nameArtc}/by_stock/{id}")
@@ -48,7 +48,7 @@ public class GoodsContorller {
                                                           @PathVariable("id") int id,
                                                           @RequestBody
                                                           DateRangeForm startAndEnd){
-        return goodsService.getMoveByNameGoodsAndStockId(nameArtc,id,startAndEnd.getStart(),startAndEnd.getEnd());
+        return goodsClient.getMoveByNameGoodsAndStockId(nameArtc,id,startAndEnd.getStart(),startAndEnd.getEnd());
     }
 
 }

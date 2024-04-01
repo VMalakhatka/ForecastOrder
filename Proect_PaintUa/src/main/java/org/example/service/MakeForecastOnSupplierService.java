@@ -8,7 +8,7 @@ import org.example.entity.data_from_db.StockParam;
 import org.example.entity.forecast.ForecastTemplate;
 import org.example.entity.forecast.SetStockTT;
 import org.example.entity.forecast.StockTipSale;
-import org.example.entity.forecast.entity_enum.TypeOfForecast;
+import org.example.entity.entity_enum.TypeOfForecast;
 import org.example.entity.templates.SetStockTtTemplate;
 import org.example.entity.templates.StockTipSaleTemplate;
 import org.example.entity.templates.Template;
@@ -53,6 +53,17 @@ public class MakeForecastOnSupplierService {
         return forecastTemplateRepository.findAll();
     }
 
+    public void delAllForecasts() {
+        forecastTemplateRepository.deleteAll();
+    }
+
+    @Transactional
+    public void delForecastTemplate(long id) throws NotFindByID {
+        ForecastTemplate fT=forecastTemplateRepository.findById(id).orElseThrow(()->
+                new NotFindByID("Could not find the forecast by ID in the delForecastTemplate method"));
+        forecastTemplateRepository.delete(fT);
+    }
+
     public ForecastTemplate getForecastById(long id) throws NotFindByID {
         return forecastTemplateRepository.findById(id).orElseThrow(()->
                 new NotFindByID("forecast not found by ID"));
@@ -62,8 +73,8 @@ public class MakeForecastOnSupplierService {
         return forecastTemplateRepository.findById(id).orElseThrow(()->
                 new NotFindByID("forecast not found by ID when you searched for the product ")).getGoodsSet();
     }
-    @Transactional
-    public ForecastTemplate run(Long id_template,String supplier) throws DataNotValid {
+
+    public ForecastTemplate run(Long id_template,String supplier) throws DataNotValid, NotEnoughData {
         Optional<Template> templateOptional= templateRepository.findById(id_template);
         if (templateOptional.isEmpty())
             throw new DataNotValid("There is no such template");
@@ -75,17 +86,24 @@ public class MakeForecastOnSupplierService {
         } catch (NotEnoughData e) {
             throw new RuntimeException(e);
         }
-        fromExternalDatabaseServise.saveListOfChildForForecast(forecastTemplateSaved);
-        fromExternalDatabaseServise.saveListOfMoveForForecast(forecastTemplateSaved);
+        try {
+            fromExternalDatabaseServise.saveListOfMoveForForecast(forecastTemplateSaved);
+        } catch (NotEnoughData e) {
+            throw new RuntimeException(e);
+        }
+
         fromExternalDatabaseServise.saveListOfRestForForecast(forecastTemplateSaved);
+
         fromExternalDatabaseServise.saveStockParam(forecastTemplateSaved);
 
-        sale(forecastTemplateSaved);
-        rest(forecastTemplateSaved);
-        dayWhenGoodsNotOnStock(forecastTemplateSaved);
-        countNotSaleAndOrderAndMin(forecastTemplateSaved);
-        plusKinder(forecastTemplateSaved);
-
+       fromExternalDatabaseServise.saveListOfChildForForecast(forecastTemplateSaved);
+//
+//        sale(forecastTemplateSaved);
+//        rest(forecastTemplateSaved);
+//        dayWhenGoodsNotOnStock(forecastTemplateSaved);
+//        countNotSaleAndOrderAndMin(forecastTemplateSaved);
+//        plusKinder(forecastTemplateSaved);
+//
         return forecastTemplateSaved;
     }
 
@@ -159,6 +177,7 @@ public class MakeForecastOnSupplierService {
         forecastTemplate.setType(TypeOfForecast.valueOf(template.getType()));
         forecastTemplate.setKoefToRealSale(template.getKoefToRealSale());
         forecastTemplate.setSupplier(supplier);
+        forecastTemplate.setIdMainStock(template.getIdMainStock());
         template.getSetStockTtTemplates().forEach(set->
                 forecastTemplate.addSetStockTT(setStockTTtoSetStockTtTemplate(set)));
         return forecastTemplate;
@@ -221,7 +240,7 @@ public class MakeForecastOnSupplierService {
 //                    TypedQuery<GoodsMove> query = entityManager.createQuery(
 //                            "SELECT e FROM GoodsMove e WHERE e.idStock = :stock ORDER BY e.data DESC", GoodsMove.class);
 //                    query.setParameter("stock", stock);
-                    PriorityQueue<GoodsMove> moves = moveSetToPriorityQueue(goods.getGoodsMoveSet(),stock);
+                    PriorityQueue<GoodsMove> moves = moveSetToPriorityQueueByData(goods.getGoodsMoveSet(),stock);
 //                            query.getResultList(); // Что будет если список будет огромный?
                     if(!moves.isEmpty()){
                         long nullDay= 0;
@@ -255,7 +274,7 @@ public class MakeForecastOnSupplierService {
         });
     }
 
-    private PriorityQueue<GoodsMove> moveSetToPriorityQueue(Set<GoodsMove> goodsMoveSet, Long stock) {
+    private PriorityQueue<GoodsMove> moveSetToPriorityQueueByData(Set<GoodsMove> goodsMoveSet, Long stock) {
         PriorityQueue<GoodsMove> prQGoodsM=new PriorityQueue<>((move1, move2) ->
                 move2.getData().compareTo(move1.getData()));
         goodsMoveSet.stream().filter(m->m.getIdStock()==stock).forEach(prQGoodsM::add);
@@ -312,6 +331,5 @@ public class MakeForecastOnSupplierService {
             }));
         }
     }
-
 
 }

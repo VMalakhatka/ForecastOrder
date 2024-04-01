@@ -4,11 +4,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.example.entity.templates.entity_enum.TypDocmPr;
+import org.example.entity.entity_enum.TypDocmPr;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Table(name = "goods_move")
@@ -26,7 +24,7 @@ public class GoodsMove {
     @Column(name = "N_DOCUM")
     private long nDocum;
     @Column(name = "NUMDCM_DOP")
-    @Size(max = 4)
+    @Size(max = 10)
     private String  numdcmDop;
     @Column(name = "ORG_PREDM")
     @Size(max = 8)

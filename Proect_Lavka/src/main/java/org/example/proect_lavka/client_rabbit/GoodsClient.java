@@ -1,11 +1,10 @@
-package org.example.proect_lavka.service;
+package org.example.proect_lavka.client_rabbit;
 
 
 import org.example.proect_lavka.config.RabbitConfig;
 import org.example.proect_lavka.dao.SclArtcDao;
 import org.example.proect_lavka.dao.SclMoveDao;
-import org.example.proect_lavka.dto.GoodsDtoOut;
-import org.example.proect_lavka.dto.SuppStockDtoIn;
+import org.example.proect_lavka.dto.*;
 import org.example.proect_lavka.entity.SclArtc;
 import org.example.proect_lavka.entity.SclMove;
 import org.example.proect_lavka.mapper.GoodsMapper;
@@ -20,13 +19,13 @@ import java.util.stream.Collectors;
 
 @Service
 @EnableRabbit
-public class GoodsService {
+public class GoodsClient {
 
    SclArtcDao sclArtcDao;
    SclMoveDao sclMoveDao;
    GoodsMapper goodsMapper;
     @Autowired
-    public GoodsService(SclArtcDao sclArtcDao, SclMoveDao sclMoveDao, GoodsMapper goodsMapper) {
+    public GoodsClient(SclArtcDao sclArtcDao, SclMoveDao sclMoveDao, GoodsMapper goodsMapper) {
         this.sclArtcDao = sclArtcDao;
         this.sclMoveDao = sclMoveDao;
         this.goodsMapper = goodsMapper;
@@ -38,18 +37,24 @@ public class GoodsService {
     }
 
     public List<SclMove> getMoveByNameGoodsAndStockId(String nameArtc, int id,String strStart, String strEnd){
-//        List<SclMove> sclMoves=sclMoveDao.getMoveByGoodsAndData(nameArtc,id,strStart,strEnd);
-//        sclMoves.forEach(m->{
-//            System.out.println(m.data().toLocalDateTime()+"   "+m);
-//        });
         return sclMoveDao.getMoveByGoodsAndData(nameArtc,id ,strStart,strEnd);
     }
 
     @RabbitListener(queues = RabbitConfig.QUEUE_NAME)
     public List<GoodsDtoOut> getGoodsBySupplierAndStockId(@Payload SuppStockDtoIn suppStock){
-        List<GoodsDtoOut> goodsDtoOutList=sclArtcDao.getAllBySupplierAndStockId(suppStock.supplier(),suppStock.idStock()).stream().map(g->
+        return sclArtcDao.getAllBySupplierAndStockId(suppStock.supplier(),suppStock.idStock()).stream().map(g->
                 goodsMapper.toGoodsDtoOut(g)).collect(Collectors.toList());
-        System.out.println(goodsDtoOutList);
-        return goodsDtoOutList;
+    }
+
+    @RabbitListener(queues = RabbitConfig.QUEUE_FOR_REST)
+    public List<RestDtoOut> getRestByGoodsAndStockList(@Payload GetDataByGoodsListAndStockListDtoIn goodsListAndStockListDtoInksList){
+        return sclArtcDao.getRestByGoodsListAndStockList(goodsListAndStockListDtoInksList.namePredmList(),
+                goodsListAndStockListDtoInksList.idList());
+    }
+
+    @RabbitListener(queues = RabbitConfig.QUEUE_FOR_SOCK_PARAM)
+    public List<StockParamDtoOut> getStockParamByGoodsAndStockList(@Payload GetDataByGoodsListAndStockListDtoIn goodsListAndStockListDtoInksList){
+        return sclArtcDao.getStockParamByGoodsListAndStockList(goodsListAndStockListDtoInksList.namePredmList(),
+                goodsListAndStockListDtoInksList.idList());
     }
 }

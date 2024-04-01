@@ -13,6 +13,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitConfig {
     public static final String QUEUE_NAME = "myQueue";
+    public static final String QUEUE_FOR_MOVE = "MoveQueue";
+    public static final String QUEUE_FOR_REST = "RestQueue";
+    public static final String QUEUE_FOR_SOCK_PARAM = "StockParamQueue";
+    public static final String QUEUE_FOR_ASSEMBLE = "AssembleQueue";
 
     @Bean
     public ConnectionFactory connectionFactory() {
@@ -44,13 +48,23 @@ public class RabbitConfig {
         return new Queue(QUEUE_NAME);
     }
 
-    // Данный бин не нужен, т.к. мы создали класс с RabbitMqReceiver
-//    @Bean
-//    public SimpleMessageListenerContainer messageListenerContainer() {
-//        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
-//        container.setConnectionFactory(connectionFactory());
-//        container.setQueueNames(QUEUE_NAME);
-//        container.setMessageListener(message -> System.out.println(message)); // в простейшес виде можно указать слушателя сообщения здесь
-//        return container;
-//    }
+    @Bean
+    public Queue forMoveQueue() {
+        return new Queue(QUEUE_FOR_MOVE);
+    }
+
+    @Bean
+    public Queue restQueue() {
+        return new Queue(QUEUE_FOR_REST);
+    }
+
+    @Bean
+    public Queue stockParamQueue() {
+        return new Queue(QUEUE_FOR_SOCK_PARAM);
+    }
+
+    @Bean
+    public Queue assembleQueue() {
+        return new Queue(QUEUE_FOR_ASSEMBLE);
+    }
 }
