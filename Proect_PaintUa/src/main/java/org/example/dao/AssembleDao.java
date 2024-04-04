@@ -6,5 +6,5 @@ import org.example.dto.data_from_db.out.GetDataByGoodsListAndStockListDtoOut;
 import java.util.List;
 
 public interface AssembleDao {
-    List<AssembleDtoIn> getAssembleByGoodsList(GetDataByGoodsListAndStockListDtoOut dto);
+    List<AssembleDtoIn> getAssembleByGoodsList(GetDataByGoodsListAndStockListDtoOut dto, Object o);
 }

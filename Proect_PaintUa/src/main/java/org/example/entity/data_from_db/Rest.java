@@ -2,12 +2,16 @@ package org.example.entity.data_from_db;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Table(name = "rest")
 @NoArgsConstructor
 @Data
+@ToString(exclude = {"good"})
+@EqualsAndHashCode(exclude = {"good"})
 public class Rest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

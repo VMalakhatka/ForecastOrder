@@ -2,9 +2,7 @@ package org.example.dao;
 
 import org.example.config.RabbitConfig;
 import org.example.dto.data_from_db.in.AssembleDtoIn;
-import org.example.dto.data_from_db.in.StockParamDtoIn;
 import org.example.dto.data_from_db.out.GetDataByGoodsListAndStockListDtoOut;
-import org.example.entity.data_from_db.Assemble;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -23,7 +21,7 @@ public class AssembleDaoImp implements AssembleDao {
     }
 
     @Override
-    public List<AssembleDtoIn> getAssembleByGoodsList(GetDataByGoodsListAndStockListDtoOut dto) {
+    public List<AssembleDtoIn> getAssembleByGoodsList(GetDataByGoodsListAndStockListDtoOut dto, Object o) {
         ParameterizedTypeReference<List<AssembleDtoIn>> responseType = new ParameterizedTypeReference<List<AssembleDtoIn>>() {};
         List<AssembleDtoIn> stockParamDtoIns=template.convertSendAndReceiveAsType(RabbitConfig.QUEUE_FOR_ASSEMBLE,dto,responseType);
         return stockParamDtoIns;

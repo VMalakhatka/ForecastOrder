@@ -12,4 +12,6 @@ public interface SclArtcDao {
   List<RestDtoOut> getRestByGoodsListAndStockList(List<String> namePredmList, List<Long> idList);
 
   List<StockParamDtoOut> getStockParamByGoodsListAndStockList(List<String> namePredmList, List<Long> idList);
+
+    List<SclArtc> getGoodsByNumDoc(long numDoc);
 }

@@ -1,5 +1,6 @@
 package org.example.entity.data_from_db;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -58,7 +59,27 @@ public class Goods {
         this.supplier = supplier;
         this.frost = frost;
         this.assembl = assembl;
+//        this.forecast.setNotOnStock(0.0);
+//        this.forecast.setNotSaleAndSale(0.0);
+//        this.forecast.setSale(0.0);
+//        this.forecast.setRestTT(0.0);
+//        this.forecast.setNeedToMove(0.0);
+//        this.forecast.setOptForecast(0.0);
+//        this.forecast.setOrderWithoutPack(0.0);
+//        this.forecast.setOrderTT(0.0);
     }
+
+//    @PostConstruct
+//    public void postGoods(){
+//        this.forecast.setNotOnStock(0.0);
+//        this.forecast.setNotSaleAndSale(0.0);
+//        this.forecast.setSale(0.0);
+//        this.forecast.setRestTT(0.0);
+//        this.forecast.setNeedToMove(0.0);
+//        this.forecast.setOptForecast(0.0);
+//        this.forecast.setOrderWithoutPack(0.0);
+//        this.forecast.setOrderTT(0.0);
+//    }
 
     @Embedded
     private Forecast forecast;

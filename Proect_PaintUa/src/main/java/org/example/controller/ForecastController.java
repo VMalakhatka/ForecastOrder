@@ -7,10 +7,12 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 import org.example.dto.data_from_db.out.GoodsDtoOut;
 import org.example.dto.forecast.out.ForecastTemplateDtoOut;
+import org.example.entity.data_from_db.Goods;
 import org.example.entity.forecast.ForecastTemplate;
 import org.example.exeption.DataNotValid;
 import org.example.exeption.NotEnoughData;
 import org.example.exeption.NotFindByID;
+import org.example.exeption.RabbitNotAnswer;
 import org.example.mapper.data_from_db.out.DataFromDbMapper;
 import org.example.mapper.forecast.out.ForecastOutMapper;
 import org.example.service.MakeForecastOnSupplierService;
@@ -18,7 +20,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.ConnectException;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Tag(name = "Running the forecast",description = "run forecast by template ID and supplier, output results")
@@ -52,15 +56,8 @@ public class ForecastController {
                                               @PathVariable("supplier") @Size(min = 1,max = 8)
                                               @Parameter(description = "goods of this supplier will participate in the forecast")
                                               String supplier
-                                              ){
-
-        try {
+                                              ) throws NotEnoughData, DataNotValid, ConnectException, RabbitNotAnswer {
             return forecastOutMapper.toForecastTemplateDtoOut(makeForecastOnSupplierService.run(id,supplier));
-        } catch (DataNotValid e) {
-            throw new RuntimeException(e);
-        } catch (NotEnoughData e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @Operation(
@@ -93,8 +90,12 @@ public class ForecastController {
     )
     public List<GoodsDtoOut> getForecastGoods(@PathVariable("id") @Min(0) @Parameter(description = "Forecast Id") long id){
         try {
-            return makeForecastOnSupplierService.getGoodsListByForecastId(id).stream().
-                    map(g->dataFromDbMapper.toGoodsDtoOut(g)).collect(Collectors.toList());
+            Set<Goods> goodsSet=makeForecastOnSupplierService.getGoodsListByForecastId(id);
+            List<GoodsDtoOut> goodsDtoOuts=goodsSet.stream().
+                    map(g->dataFromDbMapper.toGoodsDtoOut(g)).toList();
+            return goodsDtoOuts;
+//            return makeForecastOnSupplierService.getGoodsListByForecastId(id).stream().
+//                    map(g->dataFromDbMapper.toGoodsDtoOut(g)).collect(Collectors.toList());
         } catch (NotFindByID e) {
             throw new RuntimeException(e);
         }

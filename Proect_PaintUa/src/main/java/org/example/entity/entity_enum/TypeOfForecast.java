@@ -4,5 +4,6 @@ public enum TypeOfForecast {
     IMPORT,
     OPT,
     SUPPLIER,
-    INTERNAL_TRANSFER
+    INTERNAL_TRANSFER,
+    DOCUMENT
 }

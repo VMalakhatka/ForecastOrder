@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Size;
 import org.example.proect_lavka.entity.SclArtc;
 import org.example.proect_lavka.entity.SclMove;
 import org.example.proect_lavka.client_rabbit.GoodsClient;
+import org.example.proect_lavka.service.GoodsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -21,9 +22,11 @@ import java.util.List;
 public class GoodsContorller {
 
     GoodsClient goodsClient;
-    @Autowired
-    public GoodsContorller(GoodsClient goodsClient) {
+    GoodsService goodsService;
+
+    public GoodsContorller(GoodsClient goodsClient, GoodsService goodsService) {
         this.goodsClient = goodsClient;
+        this.goodsService = goodsService;
     }
 
     @GetMapping("{supp}/by_stock/{id}")
@@ -35,7 +38,7 @@ public class GoodsContorller {
                                              @Size(min = 1,max = 8) String supp,
                                                       @PathVariable("id") @Min(0)
                                             @Parameter(description = "the stock ID") long id){
-        return goodsClient.getGoodsBySupplierAndStockId(supp,id);
+        return goodsService.getGoodsBySupplierAndStockId(supp,id);
     }
 
     @PostMapping("/move/{nameArtc}/by_stock/{id}")
@@ -48,7 +51,17 @@ public class GoodsContorller {
                                                           @PathVariable("id") int id,
                                                           @RequestBody
                                                           DateRangeForm startAndEnd){
-        return goodsClient.getMoveByNameGoodsAndStockId(nameArtc,id,startAndEnd.getStart(),startAndEnd.getEnd());
+        return goodsService.getMoveByNameGoodsAndStockId(nameArtc,id,startAndEnd.getStart(),startAndEnd.getEnd());
+    }
+
+    @GetMapping("/{num_doc}")
+    @Operation(
+            summary = "Get all products by doc ",
+            description = "Outputs a list of all found products of unic num doc"
+    )
+    public List<SclArtc> getGoodsByNumDoc(@PathVariable("num_doc") @Parameter(description = "unic numer of document where find list jf goods for forecast")
+                                                      @Min(0) long numDoc){
+        return goodsService.getGoodsByNumDoc(numDoc);
     }
 
 }

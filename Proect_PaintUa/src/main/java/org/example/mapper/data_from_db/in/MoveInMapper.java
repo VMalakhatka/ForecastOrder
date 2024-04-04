@@ -7,6 +7,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class MoveInMapper {
+
+
     public GoodsMove toGoodsMove(MoveDtoIn dto){
         return new GoodsMove(
                 null, dto.idStock(), dto.UnicumNum(), dto.nDocum(),

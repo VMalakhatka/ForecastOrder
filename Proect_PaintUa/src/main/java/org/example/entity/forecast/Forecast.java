@@ -1,5 +1,6 @@
 package org.example.entity.forecast;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,4 +30,15 @@ public class Forecast {
     @Column(name = "order_TT")
     private double orderTT;
 
+    @PostConstruct
+    public void ForecastPost() {
+        this.notOnStock = 0.0;
+        this.notSaleAndSale = 0.0;
+        this.sale = 0.0;
+        this.restTT = 0.0;
+        this.needToMove = 0.0;
+        this.optForecast = 0.0;
+        this.orderWithoutPack = 0.0;
+        this.orderTT = 0.0;
+    }
 }

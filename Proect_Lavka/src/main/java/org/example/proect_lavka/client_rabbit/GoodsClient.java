@@ -6,8 +6,8 @@ import org.example.proect_lavka.dao.SclArtcDao;
 import org.example.proect_lavka.dao.SclMoveDao;
 import org.example.proect_lavka.dto.*;
 import org.example.proect_lavka.entity.SclArtc;
-import org.example.proect_lavka.entity.SclMove;
 import org.example.proect_lavka.mapper.GoodsMapper;
+import org.example.proect_lavka.service.GoodsService;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,6 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @EnableRabbit
@@ -24,26 +23,19 @@ public class GoodsClient {
    SclArtcDao sclArtcDao;
    SclMoveDao sclMoveDao;
    GoodsMapper goodsMapper;
+   GoodsService goodsService;
     @Autowired
-    public GoodsClient(SclArtcDao sclArtcDao, SclMoveDao sclMoveDao, GoodsMapper goodsMapper) {
+    public GoodsClient(SclArtcDao sclArtcDao, SclMoveDao sclMoveDao, GoodsMapper goodsMapper, GoodsService goodsService) {
         this.sclArtcDao = sclArtcDao;
         this.sclMoveDao = sclMoveDao;
         this.goodsMapper = goodsMapper;
-    }
-
-
-    public List<SclArtc> getGoodsBySupplierAndStockId(String supp, long id){
-        return sclArtcDao.getAllBySupplierAndStockId(supp,id);
-    }
-
-    public List<SclMove> getMoveByNameGoodsAndStockId(String nameArtc, int id,String strStart, String strEnd){
-        return sclMoveDao.getMoveByGoodsAndData(nameArtc,id ,strStart,strEnd);
+        this.goodsService = goodsService;
     }
 
     @RabbitListener(queues = RabbitConfig.QUEUE_NAME)
-    public List<GoodsDtoOut> getGoodsBySupplierAndStockId(@Payload SuppStockDtoIn suppStock){
-        return sclArtcDao.getAllBySupplierAndStockId(suppStock.supplier(),suppStock.idStock()).stream().map(g->
-                goodsMapper.toGoodsDtoOut(g)).collect(Collectors.toList());
+    public List<GoodsDtoOut> getGoods(@Payload GetGoodsDtoOut getGoodsDtoOut){
+        List<GoodsDtoOut> goodsDtoOut=goodsService.getGoods(getGoodsDtoOut);
+        return goodsDtoOut;
     }
 
     @RabbitListener(queues = RabbitConfig.QUEUE_FOR_REST)
@@ -56,5 +48,9 @@ public class GoodsClient {
     public List<StockParamDtoOut> getStockParamByGoodsAndStockList(@Payload GetDataByGoodsListAndStockListDtoIn goodsListAndStockListDtoInksList){
         return sclArtcDao.getStockParamByGoodsListAndStockList(goodsListAndStockListDtoInksList.namePredmList(),
                 goodsListAndStockListDtoInksList.idList());
+    }
+
+    public List<SclArtc> getGoodsByNumDoc(long numDoc) {
+        return sclArtcDao.getGoodsByNumDoc(numDoc);
     }
 }

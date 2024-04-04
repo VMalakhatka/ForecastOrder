@@ -23,8 +23,8 @@ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
         </sql>
     </changeSet>
 
-    <changeSet id="Load data from CSV file 2" author="Malakhatka">
-    <loadData tableName="template" file="db/changelog/template.csv" separator=";">
+    <changeSet id="Load data from CSV file template_doc" author="Malakhatka">
+    <loadData tableName="template" file="db/changelog/template_doc.csv" separator=";">
         <column name="id" header="id" />
         <column name="end_analysis" header="end_analysis" type="DATA"/>
         <column name="start_analysis" header="start_analysis" type="DATA"/>
@@ -37,13 +37,13 @@ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
 
 
-    <changeSet id="Load data from CSV file set_stock_TT_template" author="Malakhatka">
-        <loadData tableName="set_stock_tt_template" file="db/changelog/set_stock_TT_template.csv" separator=";">
+    <changeSet id="Load data from CSV file set_stock_TT_template_doc" author="Malakhatka">
+        <loadData tableName="set_stock_tt_template" file="db/changelog/set_stock_TT_template_doc.csv" separator=";">
         </loadData>
     </changeSet>
 
-    <changeSet id="Load data from CSV file stock_tip_sale_templete" author="Malakhatka">
-        <loadData tableName="stock_tip_sale_templete" file="db/changelog/stock_tip_sale_templete.csv" separator=";">
+    <changeSet id="Load data from CSV file stock_tip_sale_templete_doc" author="Malakhatka">
+        <loadData tableName="stock_tip_sale_templete" file="db/changelog/stock_tip_sale_templete_doc.csv" separator=";">
         </loadData>
     </changeSet>
 

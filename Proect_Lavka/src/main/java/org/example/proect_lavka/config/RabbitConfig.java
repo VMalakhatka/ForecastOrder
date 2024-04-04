@@ -17,6 +17,7 @@ public class RabbitConfig {
     public static final String QUEUE_FOR_REST = "RestQueue";
     public static final String QUEUE_FOR_SOCK_PARAM = "StockParamQueue";
     public static final String QUEUE_FOR_ASSEMBLE = "AssembleQueue";
+    public static final String QUEUE_HEALS = "HealsQueue";
 
     @Bean
     public ConnectionFactory connectionFactory() {
@@ -64,7 +65,9 @@ public class RabbitConfig {
     }
 
     @Bean
-    public Queue assembleQueue() {
-        return new Queue(QUEUE_FOR_ASSEMBLE);
+    public Queue assembleQueue() {return new Queue(QUEUE_FOR_ASSEMBLE);}
+    @Bean
+    public Queue healsQueue() {
+        return new Queue(QUEUE_HEALS);
     }
 }

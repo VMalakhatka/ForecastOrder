@@ -18,6 +18,7 @@ public class RabbitConfig {
     public static final String QUEUE_FOR_REST = "RestQueue";
     public static final String QUEUE_FOR_SOCK_PARAM = "StockParamQueue";
     public static final String QUEUE_FOR_ASSEMBLE = "AssembleQueue";
+    public static final String QUEUE_HEALS = "HealsQueue";
 
     @Bean
     public ConnectionFactory connectionFactory() {
@@ -104,6 +105,19 @@ public class RabbitConfig {
         SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
         container.setConnectionFactory(connectionFactory());
         container.setQueueNames(QUEUE_FOR_ASSEMBLE);
+        return container;
+    }
+
+    @Bean
+    public Queue healsQueue() {
+        return new Queue(QUEUE_HEALS);
+    }
+
+    @Bean
+    public SimpleMessageListenerContainer healsListenerContainer() {
+        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
+        container.setConnectionFactory(connectionFactory());
+        container.setQueueNames(QUEUE_HEALS);
         return container;
     }
 }

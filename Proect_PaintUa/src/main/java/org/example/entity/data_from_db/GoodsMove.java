@@ -3,7 +3,9 @@ package org.example.entity.data_from_db;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.example.entity.entity_enum.TypDocmPr;
 
 import java.time.LocalDateTime;
@@ -11,6 +13,8 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "goods_move")
 @NoArgsConstructor
+@ToString(exclude = {"good"})
+@EqualsAndHashCode(exclude = {"good"})
 @Data
 public class GoodsMove {
     @Id

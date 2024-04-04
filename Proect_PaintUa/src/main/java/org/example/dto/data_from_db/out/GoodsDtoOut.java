@@ -28,8 +28,8 @@ public record GoodsDtoOut(
         double orderWithoutPack,
         double orderTT,
         long forecastTemplateId,
-        List<StockParamDtoOut> stockParamDtoOuts,
-        List<AssembleDtoOut> assembleParentDtoOuts,
-        AssembleDtoOut assembleChildDtoOut
+        List<StockParamDtoOut> stockParamDtoOuts
+        ,List<AssembleDtoOut> assembleParentDtoOuts
+        ,AssembleDtoOut assembleChildDtoOut
         ) {
 }

@@ -34,6 +34,19 @@ public class SetStockTT {
     @Column(name = "name_stock")
     @Size(max = 200)
     private String nameStock;
+
+    public SetStockTT(Long id, long idTT, String nameTT, long idStock, String nameStock, StockRole role, boolean isMin, boolean isMax, boolean isFasovka) {
+        this.id = id;
+        this.idTT = idTT;
+        this.nameTT = nameTT;
+        this.idStock = idStock;
+        this.nameStock = nameStock;
+        this.role = role;
+        this.isMin = isMin;
+        this.isMax = isMax;
+        this.isFasovka = isFasovka;
+    }
+
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
     private StockRole role;

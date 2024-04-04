@@ -15,12 +15,14 @@ import org.example.entity.templates.Template;
 import org.example.exeption.DataNotValid;
 import org.example.exeption.NotEnoughData;
 import org.example.exeption.NotFindByID;
+import org.example.exeption.RabbitNotAnswer;
 import org.example.repository.forecast.ForecastTemplateRepository;
 import org.example.repository.templates.TemplateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.net.ConnectException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -28,25 +30,23 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 /**
- *  Сервис принимает на вход номер шаблона заказа, поставщика(по которому заказ формировать)
+ * Сервис принимает на вход номер шаблона заказа, поставщика(по которому заказ формировать)
  * Дату начала анализа и конец анализа - если даты не заданы, то отсчитывается дата окончания
  * анализа от ткущей, Текущая дата - дата начала анализа
- * */
+ */
 @Service
 public class MakeForecastOnSupplierService {
     TemplateRepository templateRepository;
     ForecastTemplateRepository forecastTemplateRepository;
-    FromExternalDatabaseServise fromExternalDatabaseServise;
-//    CountingService countingService;
+    FromExternalDatabaseService fromExternalDatabaseService;
+
 
     @Autowired
-    public MakeForecastOnSupplierService(TemplateRepository templateRepository, ForecastTemplateRepository forecastTemplateRepository, FromExternalDatabaseServise fromExternalDatabaseServise) {
+    public MakeForecastOnSupplierService(TemplateRepository templateRepository, ForecastTemplateRepository forecastTemplateRepository, FromExternalDatabaseService fromExternalDatabaseService) {
         this.templateRepository = templateRepository;
         this.forecastTemplateRepository = forecastTemplateRepository;
-        this.fromExternalDatabaseServise = fromExternalDatabaseServise;
+        this.fromExternalDatabaseService = fromExternalDatabaseService;
     }
-
-
 
 
     public List<ForecastTemplate> getAllForecast() {
@@ -59,88 +59,88 @@ public class MakeForecastOnSupplierService {
 
     @Transactional
     public void delForecastTemplate(long id) throws NotFindByID {
-        ForecastTemplate fT=forecastTemplateRepository.findById(id).orElseThrow(()->
+        ForecastTemplate fT = forecastTemplateRepository.findById(id).orElseThrow(() ->
                 new NotFindByID("Could not find the forecast by ID in the delForecastTemplate method"));
         forecastTemplateRepository.delete(fT);
     }
 
     public ForecastTemplate getForecastById(long id) throws NotFindByID {
-        return forecastTemplateRepository.findById(id).orElseThrow(()->
+        return forecastTemplateRepository.findById(id).orElseThrow(() ->
                 new NotFindByID("forecast not found by ID"));
     }
 
     public Set<Goods> getGoodsListByForecastId(long id) throws NotFindByID {
-        return forecastTemplateRepository.findById(id).orElseThrow(()->
+//        ForecastTemplate fT=forecastTemplateRepository.findById(id).orElseThrow(()->
+//                  new NotFindByID("forecast not found by ID when you searched for the product "));
+//        Set<Goods> goodsSet=fT.getGoodsSet();
+//        return goodsSet;
+        return forecastTemplateRepository.findById(id).orElseThrow(() ->
                 new NotFindByID("forecast not found by ID when you searched for the product ")).getGoodsSet();
     }
 
-    public ForecastTemplate run(Long id_template,String supplier) throws DataNotValid, NotEnoughData {
-        Optional<Template> templateOptional= templateRepository.findById(id_template);
+
+    public ForecastTemplate run(Long id_template, String supplier) throws DataNotValid, NotEnoughData, ConnectException, RabbitNotAnswer {
+        Optional<Template> templateOptional = templateRepository.findById(id_template);
         if (templateOptional.isEmpty())
             throw new DataNotValid("There is no such template");
-        ForecastTemplate forecastTemplate=
-                saveTemplateToForecast(templateOptional.orElse(null),supplier);
-        ForecastTemplate forecastTemplateSaved =forecastTemplateRepository.save(forecastTemplate);
-        try {
-            fromExternalDatabaseServise.saveListOfGoodsBySupplier(forecastTemplateSaved);
-        } catch (NotEnoughData e) {
-            throw new RuntimeException(e);
-        }
-        try {
-            fromExternalDatabaseServise.saveListOfMoveForForecast(forecastTemplateSaved);
-        } catch (NotEnoughData e) {
-            throw new RuntimeException(e);
-        }
+        ForecastTemplate forecastTemplate =
+                saveTemplateToForecast(templateOptional.orElse(null), supplier);
+        ForecastTemplate forecastTemplateSaved = forecastTemplateRepository.save(forecastTemplate);
 
-        fromExternalDatabaseServise.saveListOfRestForForecast(forecastTemplateSaved);
+        fromExternalDatabaseService.saveListOfGoods(forecastTemplateSaved);
 
-        fromExternalDatabaseServise.saveStockParam(forecastTemplateSaved);
+        fromExternalDatabaseService.saveListOfMoveForForecast(forecastTemplateSaved);
 
-       fromExternalDatabaseServise.saveListOfChildForForecast(forecastTemplateSaved);
-//
-//        sale(forecastTemplateSaved);
-//        rest(forecastTemplateSaved);
-//        dayWhenGoodsNotOnStock(forecastTemplateSaved);
-//        countNotSaleAndOrderAndMin(forecastTemplateSaved);
-//        plusKinder(forecastTemplateSaved);
-//
+
+        fromExternalDatabaseService.saveListOfRestForForecast(forecastTemplateSaved);
+
+        fromExternalDatabaseService.saveStockParam(forecastTemplateSaved);
+
+        fromExternalDatabaseService.saveListOfChildForForecast(forecastTemplateSaved);
+
+        sale(forecastTemplateSaved);
+        rest(forecastTemplateSaved);
+        dayWhenGoodsNotOnStock(forecastTemplateSaved);
+        countNotSaleAndOrderAndMin(forecastTemplateSaved);
+        plusKinder(forecastTemplateSaved);
+
+        forecastTemplateSaved = forecastTemplateRepository.save(forecastTemplate);
+
         return forecastTemplateSaved;
     }
 
-    private double getKindQuantity(Goods good){
+    private double getKindQuantity(Goods good) {
         double sum = 0;
-        if(!good.getAssemblePerentSet().isEmpty())
-             for (Assemble assemble : good.getAssemblePerentSet())
-                 sum+=getKindQuantity(assemble.getChildGood());
-        sum+=good.getForecast().getOrderWithoutPack();
+        if (!good.getAssemblePerentSet().isEmpty())
+            for (Assemble assemble : good.getAssemblePerentSet())
+                sum += getKindQuantity(assemble.getChildGood());
+        sum += good.getForecast().getOrderWithoutPack();
         good.getForecast().setOrderWithoutPack(sum);
 
-        if(good.getAssembleChild()!=null) {
+        if (good.getAssembleChild() != null) {
             sum = sum / good.getAssembleChild().getQuantity();
             good.getForecast().setOrderWithoutPack(0.0);
         }
         return sum;
     }
+
     private void plusKinder(ForecastTemplate forecastTemplate) {
-        forecastTemplate.getGoodsSet().forEach(good ->{
-            if (good.getAssembl()==1){
-                getKindQuantity(good);
-//                for (Assemble assemble : good.getAssemblePerentSet())
-//                    good.getForecast().setOrderWithoutPack(good.getForecast().getOrderWithoutPack()+getKindQuantity(assemble.getChildGood()));
-            }
-        } );
+        forecastTemplate.getGoodsSet().forEach(good -> {
+            if (good.getAssembl() == 1)
+                good.getForecast().setOrderWithoutPack(good.getForecast().getOrderWithoutPack() + getKindQuantity(good));
+        });
     }
 
 
     private void countNotSaleAndOrderAndMin(ForecastTemplate forecastTemplate) {
-        Set<Long> stockWithMin=forecastTemplate.getSetStockTTSet().stream().filter(SetStockTT::isMin).map(SetStockTT::getIdStock).collect(Collectors.toSet());
+        Set<Long> stockWithMin = forecastTemplate.getSetStockTTSet().stream().filter(SetStockTT::isMin).map(SetStockTT::getIdStock).collect(Collectors.toSet());
         forecastTemplate.getGoodsSet().forEach(goods -> {
 
                     double minPlus = 0;
                     for (long st : stockWithMin)
-                        for(StockParam par : goods.getStockParams())
-                            if (st==par.getIdStock())
-                                minPlus+= par.getMinTvrZap();
+                        for (StockParam par : goods.getStockParams())
+                            if (st == par.getIdStock())
+                                minPlus += par.getMinTvrZap();
 
                     if (forecastTemplate.getOrderForDay() != goods.getForecast().getNotOnStock()) {
                         goods.getForecast().setNotSaleAndSale(
@@ -148,26 +148,26 @@ public class MakeForecastOnSupplierService {
                                         * forecastTemplate.getOrderForDay());
                     }
 
-                    double saleWithKooef=goods.getForecast().getSale()*forecastTemplate.getKoefToRealSale();
-                    double forecastWithMin=goods.getForecast().getNotSaleAndSale()+minPlus;
+                    double saleWithKoef = goods.getForecast().getSale() * forecastTemplate.getKoefToRealSale();
+                    double forecastWithMin = goods.getForecast().getNotSaleAndSale() + minPlus;
                     double orderWithForecast;
-                    if(saleWithKooef<=minPlus) orderWithForecast=minPlus;
-                    else orderWithForecast= Math.min(saleWithKooef, forecastWithMin);
+                    if (saleWithKoef <= minPlus) orderWithForecast = minPlus;
+                    else orderWithForecast = Math.min(saleWithKoef, forecastWithMin);
 
-                    goods.getForecast().setOrderWithoutPack(goods.getForecast().getRestTT()>=orderWithForecast? 0:
-                            orderWithForecast-goods.getForecast().getRestTT());
+                    goods.getForecast().setOrderWithoutPack(goods.getForecast().getRestTT() >= orderWithForecast ? 0 :
+                            orderWithForecast - goods.getForecast().getRestTT());
                 }
         );
     }
 
-    private ForecastTemplate saveTemplateToForecast(Template template,String supplier) {
-        ForecastTemplate forecastTemplate=new ForecastTemplate();
+    private ForecastTemplate saveTemplateToForecast(Template template, String supplier) throws NotEnoughData {
+        ForecastTemplate forecastTemplate = new ForecastTemplate();
         forecastTemplate.setOrderForDay(template.getOrderForDay());
-        if(template.getStartAnalysis()==null || template.getEndAnalysis()==null) {
-            forecastTemplate.setStartAnalysis(LocalDateTime.now());
-            forecastTemplate.setEndAnalysis(
-                    forecastTemplate.getStartAnalysis().minusDays(template.getOrderForDay()));
-        }else {
+        if (template.getStartAnalysis() == null || template.getEndAnalysis() == null) {
+            forecastTemplate.setEndAnalysis(LocalDateTime.now());
+            forecastTemplate.setStartAnalysis(
+                    forecastTemplate.getEndAnalysis().minusDays(template.getOrderForDay()));
+        } else {
             forecastTemplate.setStartAnalysis(template.getStartAnalysis());
             forecastTemplate.setEndAnalysis(template.getEndAnalysis());
             forecastTemplate.setOrderForDay((int) Math.abs(Duration.between(forecastTemplate.getEndAnalysis(),
@@ -178,12 +178,14 @@ public class MakeForecastOnSupplierService {
         forecastTemplate.setKoefToRealSale(template.getKoefToRealSale());
         forecastTemplate.setSupplier(supplier);
         forecastTemplate.setIdMainStock(template.getIdMainStock());
-        template.getSetStockTtTemplates().forEach(set->
+        if (template.getSetStockTtTemplates().isEmpty())
+            throw new NotEnoughData("Not specified stock for template-" + template.getId());
+        template.getSetStockTtTemplates().forEach(set ->
                 forecastTemplate.addSetStockTT(setStockTTtoSetStockTtTemplate(set)));
         return forecastTemplate;
     }
 
-    private SetStockTT setStockTTtoSetStockTtTemplate(SetStockTtTemplate setTemplate){
+    private SetStockTT setStockTTtoSetStockTtTemplate(SetStockTtTemplate setTemplate) {
         SetStockTT set = new SetStockTT();
         set.setIdTT(setTemplate.getIdTT());
         set.setNameTT(setTemplate.getNameTT());
@@ -193,7 +195,7 @@ public class MakeForecastOnSupplierService {
         set.setMin(setTemplate.isMin());
         set.setMax(setTemplate.isMax());
         set.setFasovka(setTemplate.isFasovka());
-        setTemplate.getStockTipSaleTemplateHashSet().forEach(setTip->
+        setTemplate.getStockTipSaleTemplateHashSet().forEach(setTip ->
                 set.addStockTipSale(setTipTemplatesToSetTipForecast(setTip)));
         return set;
     }
@@ -207,88 +209,84 @@ public class MakeForecastOnSupplierService {
         return tipSale;
     }
 
-//    @PersistenceContext
-//    private EntityManager entityManager;
 
-
-    public void sale(ForecastTemplate forecastTemplate){
+    private void sale(ForecastTemplate forecastTemplate) {
         forecastTemplate.getSetStockTTSet().forEach(setStockTT -> {
-            if(!setStockTT.getStockTipSaleSet().isEmpty())
-                saleStock(setStockTT,forecastTemplate);
+            if (!setStockTT.getStockTipSaleSet().isEmpty())
+                saleStock(setStockTT, forecastTemplate);
         });
 
     }
 
-
-    public void rest(ForecastTemplate forecastTemplate){
-        Set<Long> stockSet=forecastTemplate.getSetStockTTSet().stream().map(SetStockTT::getIdStock).collect(Collectors.toSet());
+    private void rest(ForecastTemplate forecastTemplate) {
+        Set<Long> stockSet = forecastTemplate.getSetStockTTSet().stream().map(SetStockTT::getIdStock).collect(Collectors.toSet());
         forecastTemplate.getGoodsSet().forEach(good -> good.getRestSet().forEach(rest ->
         {
-            if(rest.getKonKolich()!=0 && stockSet.contains(rest.getIdStock()))
-                good.getForecast().setRestTT(good.getForecast().getRestTT()+rest.getKonKolich());
+            if (rest.getKonKolich() != 0 && stockSet.contains(rest.getIdStock()))
+                good.getForecast().setRestTT(good.getForecast().getRestTT() + rest.getKonKolich());
         }));
     }
 
-    public void dayWhenGoodsNotOnStock(ForecastTemplate forecastTemplate){
-        Set<Long> stockSet=forecastTemplate.getSetStockTTSet().stream().
+    private void dayWhenGoodsNotOnStock(ForecastTemplate forecastTemplate) {
+        Set<Long> stockSet = forecastTemplate.getSetStockTTSet().stream().
                 filter(setStockTT -> !setStockTT.getStockTipSaleSet().isEmpty()). // возможны еще какие-либо роли для подсчета не продано
-                                          //setStockTT.getRole().equals(StockRole.PT) || setStockTT.getRole().equals(StockRole.OPT)
+                //setStockTT.getRole().equals(StockRole.PT) || setStockTT.getRole().equals(StockRole.OPT)
                         map(SetStockTT::getIdStock).collect(Collectors.toSet());
-        forecastTemplate.getGoodsSet().forEach(goods ->{
-            if (!goods.getGoodsMoveSet().isEmpty()){
-                stockSet.forEach(stock->{
-//                    TypedQuery<GoodsMove> query = entityManager.createQuery(
-//                            "SELECT e FROM GoodsMove e WHERE e.idStock = :stock ORDER BY e.data DESC", GoodsMove.class);
-//                    query.setParameter("stock", stock);
-                    PriorityQueue<GoodsMove> moves = moveSetToPriorityQueueByData(goods.getGoodsMoveSet(),stock);
-//                            query.getResultList(); // Что будет если список будет огромный?
-                    if(!moves.isEmpty()){
-                        long nullDay= 0;
-                        LocalDateTime setNul=forecastTemplate.getStartAnalysis();
-                        double rest=goods.getRestSet().stream().filter(r->r.getIdStock()==stock).findFirst().orElseThrow().getKonKolich();
+        forecastTemplate.getGoodsSet().forEach(goods -> {
+            if (!goods.getGoodsMoveSet().isEmpty()) {
+                stockSet.forEach(stock -> {//TODO all stock calculate rest
+
+                    PriorityQueue<GoodsMove> moves = moveSetToPriorityQueueByData(goods.getGoodsMoveSet(), stock);
+
+                    if (!moves.isEmpty()) {
+                        long nullDay = 0;
+                        LocalDateTime setNul = forecastTemplate.getStartAnalysis();
+                        double rest = goods.getRestSet().stream().filter(r -> r.getIdStock() == stock).findFirst().orElseThrow().getKonKolich();
                         double newRest;
-                        //for(GoodsMove m : moves){
-                        while (!moves.isEmpty()){
-                            GoodsMove m=moves.poll();
+
+                        while (!moves.isEmpty()) {
+                            GoodsMove m = moves.poll();
                             m.setRest(rest);
-                            newRest=rest+switch (m.getTypDocmPr()){
+                            newRest = rest + switch (m.getTypDocmPr()) {
                                 case P -> m.getQuantity();
                                 case R -> -m.getQuantity();
                                 case S -> 0.0;
-                             };
-                            if (m.getData().isBefore(forecastTemplate.getStartAnalysis())) {
+                            };
+                            if (m.getData().isAfter(forecastTemplate.getStartAnalysis())) {
                                 if (rest <= 0 && newRest > 0.0)
                                     nullDay += Math.abs(Duration.between(m.getData(), setNul).toDays());
                                 if (newRest <= 0 && rest > 0) setNul = m.getData();
                             }
-                            rest=newRest;
+                            rest = newRest;
                         }
-                        if(rest<=0)
+                        if (rest <= 0) // TODO but sum only stock with tips
                             nullDay += Math.abs(Duration.between(forecastTemplate.getEndAnalysis(), setNul).toDays());
                         goods.getForecast().setNotOnStock(goods.getForecast().getNotOnStock() + nullDay);
                     }
                 });
-            }else if(goods.getForecast().getRestTT()<=0)
-                    goods.getForecast().setNotOnStock(Math.abs(Duration.between(forecastTemplate.getEndAnalysis(),
-                            forecastTemplate.getStartAnalysis()).toDays()));
+            } else if (goods.getForecast().getRestTT() <= 0)
+                goods.getForecast().setNotOnStock(Math.abs(Duration.between(forecastTemplate.getEndAnalysis(),
+                        forecastTemplate.getStartAnalysis()).toDays()));
         });
     }
 
     private PriorityQueue<GoodsMove> moveSetToPriorityQueueByData(Set<GoodsMove> goodsMoveSet, Long stock) {
-        PriorityQueue<GoodsMove> prQGoodsM=new PriorityQueue<>((move1, move2) ->
+        PriorityQueue<GoodsMove> prQGoodsM = new PriorityQueue<>((move1, move2) ->
                 move2.getData().compareTo(move1.getData()));
-        goodsMoveSet.stream().filter(m->m.getIdStock()==stock).forEach(prQGoodsM::add);
-      //  while (!prQGoodsM.isEmpty()) System.out.println(prQGoodsM.poll().getData());
+        goodsMoveSet.stream().filter(m -> m.getIdStock() == stock).forEach(prQGoodsM::add);
         return prQGoodsM;
     }
 
     private void saleStock(SetStockTT setStockTT, ForecastTemplate forecastTemplate) {
-        long stock= setStockTT.getIdStock();
-        Set<StockTipSale> tips=setStockTT.getStockTipSaleSet();
-        if(Objects.requireNonNull(tips.stream().findFirst().orElse(null)).isEqual()) {
+        long stock = setStockTT.getIdStock();
+        Set<StockTipSale> tips = setStockTT.getStockTipSaleSet();
+        if (Objects.requireNonNull(tips.stream().findFirst().orElse(null)).isEqual()) {
             forecastTemplate.getGoodsSet().forEach(goods -> goods.getGoodsMoveSet().forEach(move -> {
-                if (move.getData().isBefore(forecastTemplate.getStartAnalysis()) &&
-                        move.getData().isAfter(forecastTemplate.getEndAnalysis()) && stock==move.getIdStock()) {
+                if (move.getData().isEqual(forecastTemplate.getStartAnalysis()) ||
+                        move.getData().isEqual(forecastTemplate.getEndAnalysis()) ||
+                        (move.getData().isAfter(forecastTemplate.getStartAnalysis()) &&
+                                move.getData().isBefore(forecastTemplate.getEndAnalysis())) &&
+                                stock == move.getIdStock()) {
                     tips.forEach(t -> {
                         boolean yes = false;
                         if (t.getTypdocmPr().equals(move.getTypDocmPr())) {
@@ -305,10 +303,13 @@ public class MakeForecastOnSupplierService {
                     });
                 }
             }));
-        } else{
-            forecastTemplate.getGoodsSet().forEach(goods -> goods.getGoodsMoveSet().forEach(move->{
-                if(move.getData().isBefore(forecastTemplate.getStartAnalysis()) &&
-                        move.getData().isAfter(forecastTemplate.getEndAnalysis()) && stock==move.getIdStock()) {
+        } else {
+            forecastTemplate.getGoodsSet().forEach(goods -> goods.getGoodsMoveSet().forEach(move -> {
+                if (move.getData().isEqual(forecastTemplate.getStartAnalysis()) ||
+                        move.getData().isEqual(forecastTemplate.getEndAnalysis()) ||
+                        (move.getData().isAfter(forecastTemplate.getStartAnalysis()) &&
+                                move.getData().isBefore(forecastTemplate.getEndAnalysis())) &&
+                                stock == move.getIdStock()) {
                     AtomicBoolean no = new AtomicBoolean(false);
                     AtomicBoolean yes = new AtomicBoolean(false);
                     tips.forEach(t -> {

@@ -32,4 +32,12 @@ public class StockTipSale {
     private boolean isEqual;
     @ManyToOne
     private SetStockTT setStockTT;
+
+    public StockTipSale(Long id, String orgPredm, TypDocmPr typdocmPr, String vidDoc, boolean isEqual) {
+        this.id = id;
+        this.orgPredm = orgPredm;
+        this.typdocmPr = typdocmPr;
+        this.vidDoc = vidDoc;
+        this.isEqual = isEqual;
+    }
 }
