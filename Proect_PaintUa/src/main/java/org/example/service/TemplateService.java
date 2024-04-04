@@ -2,7 +2,7 @@ package org.example.service;
 
 import org.example.dto.template.out.TemplateOutDTO;
 import org.example.entity.templates.Template;
-import org.example.exeption.NotFindByID;
+import org.example.exception.NotFindByID;
 import org.example.mapper.template.out.TemplatesOutMapper;
 import org.example.repository.templates.TemplateRepository;
 import org.springframework.beans.factory.annotation.Autowired;

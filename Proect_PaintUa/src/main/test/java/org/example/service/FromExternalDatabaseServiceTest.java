@@ -2,16 +2,14 @@ package org.example.service;
 
 import org.example.dao.*;
 import org.example.dto.data_from_db.in.GoodsDtoIn;
-import org.example.dto.data_from_db.in.MoveDtoIn;
 import org.example.dto.data_from_db.out.GeMoveByGoodsListAndStockListAndDataStartEndDtoOut;
 import org.example.dto.data_from_db.out.GetDataByGoodsListAndStockListDtoOut;
 import org.example.entity.data_from_db.Assemble;
 import org.example.entity.data_from_db.Goods;
-import org.example.entity.data_from_db.GoodsMove;
-import org.example.entity.entity_enum.TypeOfForecast;
 import org.example.entity.forecast.ForecastTemplate;
-import org.example.exeption.DataNotValid;
-import org.example.exeption.NotEnoughData;
+import org.example.exception.DataNotValidException;
+import org.example.exception.NotEnoughDataException;
+import org.example.exception.RabbitNotAnswerException;
 import org.example.mapper.data_from_db.in.GoodsInMapper;
 import org.example.mapper.data_from_db.in.MoveInMapper;
 import org.example.mapper.data_from_db.in.RestMapper;
@@ -81,14 +79,14 @@ class FromExternalDatabaseServiceTest {
 
 
     @Test
-    public void testSaveListOfGoods() throws NotEnoughData, DataNotValid, ConnectException {
+    public void testSaveListOfGoods() throws NotEnoughDataException, DataNotValidException, ConnectException, RabbitNotAnswerException {
         Mockito.reset(goodsInDao);
         Mockito.when(goodsInDao.getGoodsBySupplierAndStockId(
                 any(String.class), any(String.class), any(Long.class))).thenAnswer(invocation -> {
             return (List<GoodsDtoIn>) null;
         });
 
-        assertThrows(NotEnoughData.class, ()->fromExternalDatabaseService.saveListOfGoods(fT), "Not goods for forecast");
+        assertThrows(NotEnoughDataException.class, ()->fromExternalDatabaseService.saveListOfGoods(fT), "Not goods for forecast");
 
         Mockito.reset(goodsInDao);
         Mockito.when(goodsInDao.getGoodsBySupplierAndStockId(
@@ -105,7 +103,7 @@ class FromExternalDatabaseServiceTest {
         ForecastTemplate forecastTemplate=fromExternalDatabaseService.saveListOfGoods(fT);
         assertEquals(forecastTemplate.getGoodsSet().stream().findFirst().orElse(null), dT.getKreul1Goods());
         fT.addGoods(dT.getKreul1Goods());
-        assertThrows(DataNotValid.class, ()->fromExternalDatabaseService.saveListOfGoods(fT),
+        assertThrows(DataNotValidException.class, ()->fromExternalDatabaseService.saveListOfGoods(fT),
                 "The product set in this forecast is not empty You cannot load new data into this forecast. ");
 
     }
@@ -113,8 +111,8 @@ class FromExternalDatabaseServiceTest {
 
 
     @Test
-    public void testSaveListOfChildForForecast() throws NotEnoughData, DataNotValid {
-        assertThrows(NotEnoughData.class, ()->fromExternalDatabaseService.saveListOfChildForForecast(fT),
+    public void testSaveListOfChildForForecast() throws NotEnoughDataException, DataNotValidException {
+        assertThrows(NotEnoughDataException.class, ()->fromExternalDatabaseService.saveListOfChildForForecast(fT),
                 "Not goods to compile for requesting child from external database ");
         Mockito.reset(assembleDao);
         Mockito.when(assembleDao.getAssembleByGoodsList(any(GetDataByGoodsListAndStockListDtoOut.class),Mockito.any()))
@@ -147,24 +145,24 @@ class FromExternalDatabaseServiceTest {
         Mockito.when(assembleDao.getAssembleByGoodsList(any(GetDataByGoodsListAndStockListDtoOut.class),Mockito.any()))
                 .thenReturn(dT.getAssembleDtoInListWrong());
         setDataForTest.setGoods(fT,dT);
-        assertThrows(DataNotValid.class, ()->fromExternalDatabaseService.saveListOfChildForForecast(fT),
+        assertThrows(DataNotValidException.class, ()->fromExternalDatabaseService.saveListOfChildForForecast(fT),
                 "A product can only be inherited once, otherwise you don't know which parent it belongs to.");
     }
 
     @Test
     public void testSaveListOfMoveForForecastEx() {
-        assertThrows(NotEnoughData.class, ()->fromExternalDatabaseService.saveListOfMoveForForecast(fT),
+        assertThrows(NotEnoughDataException.class, ()->fromExternalDatabaseService.saveListOfMoveForForecast(fT),
                 "Not goods to compile for requesting move from external database ");
         setDataForTest.setGoods(fT,dT);
-        assertThrows(NotEnoughData.class,()->fromExternalDatabaseService.saveListOfMoveForForecast(fT),
+        assertThrows(NotEnoughDataException.class,()->fromExternalDatabaseService.saveListOfMoveForForecast(fT),
                 "Not specified stock to compile for requesting move from external database " );
         setDataForTest.SetStockListWithoutTips(fT,dT);
-        assertThrows(NotEnoughData.class,()->fromExternalDatabaseService.saveListOfMoveForForecast(fT),
+        assertThrows(NotEnoughDataException.class,()->fromExternalDatabaseService.saveListOfMoveForForecast(fT),
                 "Not specified stock to compile for requesting move from external database " );
     }
 
     @Test
-    public void testSaveListOfMoveForForecast() throws NotEnoughData {
+    public void testSaveListOfMoveForForecast() throws NotEnoughDataException {
         setDataForTest.setGoods(fT,dT);
         setDataForTest.SetStockListWithTips(fT,dT);
         Mockito.reset(moveInDao);
@@ -187,18 +185,18 @@ class FromExternalDatabaseServiceTest {
 
     @Test
     public void testSaveListOfRestForForecastEx() {
-        assertThrows(NotEnoughData.class, ()->fromExternalDatabaseService.saveListOfMoveForForecast(fT),
+        assertThrows(NotEnoughDataException.class, ()->fromExternalDatabaseService.saveListOfMoveForForecast(fT),
                 "Not goods to compile for requesting rest from external database ");
         setDataForTest.setGoods(fT,dT);
-        assertThrows(NotEnoughData.class,()->fromExternalDatabaseService.saveListOfMoveForForecast(fT),
+        assertThrows(NotEnoughDataException.class,()->fromExternalDatabaseService.saveListOfMoveForForecast(fT),
                 "Not specified stock to compile for requesting rest from external database " );
         setDataForTest.SetStockListWithoutTips(fT,dT);
-        assertThrows(NotEnoughData.class,()->fromExternalDatabaseService.saveListOfMoveForForecast(fT),
+        assertThrows(NotEnoughDataException.class,()->fromExternalDatabaseService.saveListOfMoveForForecast(fT),
                 "Not specified stock to compile for requesting rest from external database " );
     }
 
     @Test
-    public void testSaveListOfRestForForecast() throws NotEnoughData {
+    public void testSaveListOfRestForForecast() throws NotEnoughDataException {
         setDataForTest.setGoods(fT,dT);
         setDataForTest.SetStockListWithTips(fT,dT);
         Mockito.reset(restDao);
@@ -216,18 +214,18 @@ class FromExternalDatabaseServiceTest {
 
     @Test
     public void testSaveStockParamEx() {
-        assertThrows(NotEnoughData.class, ()->fromExternalDatabaseService.saveListOfMoveForForecast(fT),
+        assertThrows(NotEnoughDataException.class, ()->fromExternalDatabaseService.saveListOfMoveForForecast(fT),
                 "Not goods to compile for requesting stockParam from external database ");
         setDataForTest.setGoods(fT,dT);
-        assertThrows(NotEnoughData.class,()->fromExternalDatabaseService.saveListOfMoveForForecast(fT),
+        assertThrows(NotEnoughDataException.class,()->fromExternalDatabaseService.saveListOfMoveForForecast(fT),
                 "Not specified stock to compile for requesting stockParam from external database " );
         setDataForTest.SetStockListWithoutTips(fT,dT);
-        assertThrows(NotEnoughData.class,()->fromExternalDatabaseService.saveListOfMoveForForecast(fT),
+        assertThrows(NotEnoughDataException.class,()->fromExternalDatabaseService.saveListOfMoveForForecast(fT),
                 "Not specified stock to compile for requesting stockParam from external database " );
     }
 
     @Test
-    public void testSaveStockParam() throws NotEnoughData {
+    public void testSaveStockParam() throws NotEnoughDataException {
         setDataForTest.setGoods(fT,dT);
         setDataForTest.SetStockListWithTips(fT,dT);
         Mockito.reset(stockParamDao);

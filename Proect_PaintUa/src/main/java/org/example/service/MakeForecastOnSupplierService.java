@@ -12,10 +12,10 @@ import org.example.entity.entity_enum.TypeOfForecast;
 import org.example.entity.templates.SetStockTtTemplate;
 import org.example.entity.templates.StockTipSaleTemplate;
 import org.example.entity.templates.Template;
-import org.example.exeption.DataNotValid;
-import org.example.exeption.NotEnoughData;
-import org.example.exeption.NotFindByID;
-import org.example.exeption.RabbitNotAnswer;
+import org.example.exception.DataNotValidException;
+import org.example.exception.NotEnoughDataException;
+import org.example.exception.NotFindByID;
+import org.example.exception.RabbitNotAnswerException;
 import org.example.repository.forecast.ForecastTemplateRepository;
 import org.example.repository.templates.TemplateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,10 +79,10 @@ public class MakeForecastOnSupplierService {
     }
 
 
-    public ForecastTemplate run(Long id_template, String supplier) throws DataNotValid, NotEnoughData, ConnectException, RabbitNotAnswer {
+    public ForecastTemplate run(Long id_template, String supplier) throws DataNotValidException, NotEnoughDataException, ConnectException, RabbitNotAnswerException {
         Optional<Template> templateOptional = templateRepository.findById(id_template);
         if (templateOptional.isEmpty())
-            throw new DataNotValid("There is no such template");
+            throw new DataNotValidException("There is no such template");
         ForecastTemplate forecastTemplate =
                 saveTemplateToForecast(templateOptional.orElse(null), supplier);
         ForecastTemplate forecastTemplateSaved = forecastTemplateRepository.save(forecastTemplate);
@@ -160,7 +160,7 @@ public class MakeForecastOnSupplierService {
         );
     }
 
-    private ForecastTemplate saveTemplateToForecast(Template template, String supplier) throws NotEnoughData {
+    private ForecastTemplate saveTemplateToForecast(Template template, String supplier) throws NotEnoughDataException {
         ForecastTemplate forecastTemplate = new ForecastTemplate();
         forecastTemplate.setOrderForDay(template.getOrderForDay());
         if (template.getStartAnalysis() == null || template.getEndAnalysis() == null) {
@@ -179,7 +179,7 @@ public class MakeForecastOnSupplierService {
         forecastTemplate.setSupplier(supplier);
         forecastTemplate.setIdMainStock(template.getIdMainStock());
         if (template.getSetStockTtTemplates().isEmpty())
-            throw new NotEnoughData("Not specified stock for template-" + template.getId());
+            throw new NotEnoughDataException("Not specified stock for template-" + template.getId());
         template.getSetStockTtTemplates().forEach(set ->
                 forecastTemplate.addSetStockTT(setStockTTtoSetStockTtTemplate(set)));
         return forecastTemplate;

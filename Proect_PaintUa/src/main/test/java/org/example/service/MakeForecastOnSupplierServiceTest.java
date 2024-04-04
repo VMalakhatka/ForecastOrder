@@ -2,12 +2,12 @@ package org.example.service;
 
 import org.example.entity.entity_enum.StockRole;
 import org.example.entity.entity_enum.TypeOfForecast;
-import org.example.entity.forecast.Forecast;
 import org.example.entity.forecast.ForecastTemplate;
 import org.example.entity.forecast.SetStockTT;
 import org.example.entity.templates.Template;
-import org.example.exeption.DataNotValid;
-import org.example.exeption.NotEnoughData;
+import org.example.exception.DataNotValidException;
+import org.example.exception.NotEnoughDataException;
+import org.example.exception.RabbitNotAnswerException;
 import org.example.repository.forecast.ForecastTemplateRepository;
 import org.example.repository.templates.TemplateRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.net.ConnectException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -62,7 +63,7 @@ class MakeForecastOnSupplierServiceTest {
     }
 
     @Test
-    void testCountingData() throws DataNotValid, NotEnoughData {
+    void testCountingData() throws DataNotValidException, NotEnoughDataException, RabbitNotAnswerException, ConnectException {
         template.setEndAnalysis(dT.getEnd());
         template.setStartAnalysis(dT.getStart());
         Mockito.reset(fromExternalDatabaseService);
@@ -107,15 +108,15 @@ class MakeForecastOnSupplierServiceTest {
 
 
     @Test
-    void testRunDataSetValid() throws DataNotValid, NotEnoughData {
+    void testRunDataSetValid() throws DataNotValidException, NotEnoughDataException, RabbitNotAnswerException, ConnectException {
         forecastTemplate = makeForecastOnSupplierService.run(1L, dT.getSupp());
         assertEquals(forecastTemplate.getEndAnalysis().getDayOfMonth(), LocalDateTime.now().getDayOfMonth());
-        assertThrows(DataNotValid.class,()->makeForecastOnSupplierService.run(2L, dT.getSupp()),
+        assertThrows(DataNotValidException.class,()->makeForecastOnSupplierService.run(2L, dT.getSupp()),
                 "There is no such template");
     }
 
     @Test
-    void testRunForecastTemplateFullCopyVerify() throws DataNotValid, NotEnoughData {
+    void testRunForecastTemplateFullCopyVerify() throws DataNotValidException, NotEnoughDataException, RabbitNotAnswerException, ConnectException {
         LocalDateTime end=LocalDateTime.of(2023,10, 29,0,0);
         LocalDateTime start=LocalDateTime.of(2023,10, 1,0,0);
         template.setEndAnalysis(end);
@@ -161,7 +162,7 @@ class MakeForecastOnSupplierServiceTest {
         Mockito.reset(templateRepository);
         Mockito.reset(forecastTemplateRepository);
         Mockito.when(templateRepository.findById(2L)).thenReturn(Optional.empty());
-        assertThrows(DataNotValid.class,()->makeForecastOnSupplierService.run(2L, "Kreul"),
+        assertThrows(DataNotValidException.class,()->makeForecastOnSupplierService.run(2L, "Kreul"),
                 "There is no such template");
     }
 

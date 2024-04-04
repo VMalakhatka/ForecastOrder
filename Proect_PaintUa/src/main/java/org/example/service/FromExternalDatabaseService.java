@@ -10,9 +10,9 @@ import org.example.entity.data_from_db.Rest;
 import org.example.entity.data_from_db.StockParam;
 import org.example.entity.forecast.ForecastTemplate;
 import org.example.entity.forecast.SetStockTT;
-import org.example.exeption.DataNotValid;
-import org.example.exeption.NotEnoughData;
-import org.example.exeption.RabbitNotAnswer;
+import org.example.exception.DataNotValidException;
+import org.example.exception.NotEnoughDataException;
+import org.example.exception.RabbitNotAnswerException;
 import org.example.mapper.data_from_db.in.GoodsInMapper;
 import org.example.mapper.data_from_db.in.MoveInMapper;
 import org.example.mapper.data_from_db.in.RestMapper;
@@ -63,11 +63,11 @@ public class FromExternalDatabaseService {
     }
 
     @Transactional
-    public ForecastTemplate saveListOfGoods(ForecastTemplate forecastTemplate) throws NotEnoughData, DataNotValid, RabbitNotAnswer, ConnectException {
+    public ForecastTemplate saveListOfGoods(ForecastTemplate forecastTemplate) throws NotEnoughDataException, DataNotValidException, RabbitNotAnswerException, ConnectException {
         if (!forecastTemplate.getGoodsSet().isEmpty())
-            throw new DataNotValid("The product set in this forecast is not empty You cannot load new data into this forecast. ");
+            throw new DataNotValidException("The product set in this forecast is not empty You cannot load new data into this forecast. ");
         List<GoodsDtoIn> goodsDtoInList = goodsInDao.getGoodsBySupplierAndStockId(forecastTemplate.getType().name(), forecastTemplate.getSupplier(), forecastTemplate.getIdMainStock());
-        if (goodsDtoInList == null) throw new NotEnoughData("Not goods for forecast");
+        if (goodsDtoInList == null) throw new NotEnoughDataException("Not goods for forecast");
         goodsDtoInList.forEach(dto -> forecastTemplate.addGoods(goodsInMapper.toGoodsEntity(dto)));
         forecastTemplateRepository.save(forecastTemplate);
         //TODO flash?
@@ -75,9 +75,9 @@ public class FromExternalDatabaseService {
     }
 
     @Transactional
-    public ForecastTemplate saveListOfChildForForecast(ForecastTemplate forecastTemplate) throws NotEnoughData, DataNotValid {
+    public ForecastTemplate saveListOfChildForForecast(ForecastTemplate forecastTemplate) throws NotEnoughDataException, DataNotValidException {
         if (forecastTemplate.getGoodsSet().isEmpty())
-            throw new NotEnoughData("Not goods to compile for requesting child from external database ");
+            throw new NotEnoughDataException("Not goods to compile for requesting child from external database ");
         List<AssembleDtoIn> assembleDtoIns = assembleDao.getAssembleByGoodsList(
                 new GetDataByGoodsListAndStockListDtoOut(getCodeGoods(forecastTemplate.getGoodsSet()), null), null);
         Queue<Long> idQueue = new LinkedList<>(assembleSequenceRepository.getNextSequenceValues(assembleDtoIns.size()));
@@ -85,7 +85,7 @@ public class FromExternalDatabaseService {
         TreeMap<String, Assemble> assChildTreeMap = new TreeMap<>();
         for (AssembleDtoIn a : assembleDtoIns) {
             if (assChildTreeMap.containsKey(a.childCode()))
-                throw new DataNotValid("A product can only be inherited once, otherwise you don't know which parent it belongs to.");
+                throw new DataNotValidException("A product can only be inherited once, otherwise you don't know which parent it belongs to.");
             Assemble assemble = new Assemble(idQueue.poll(), a.quntity(), null, null);
             assChildTreeMap.put(a.childCode(), assemble);
             if (assParentTreeMap.containsKey(a.parentCode())) assParentTreeMap.get(a.parentCode()).add(assemble);
@@ -126,15 +126,15 @@ public class FromExternalDatabaseService {
     }
 
     @Transactional
-    public ForecastTemplate saveListOfMoveForForecast(ForecastTemplate forecastTemplate) throws NotEnoughData {
+    public ForecastTemplate saveListOfMoveForForecast(ForecastTemplate forecastTemplate) throws NotEnoughDataException {
 
         if (forecastTemplate.getGoodsSet().isEmpty())
-            throw new NotEnoughData("Not goods to compile for requesting move from external database ");
+            throw new NotEnoughDataException("Not goods to compile for requesting move from external database ");
         List<Long> idStockList = listStockOnlyWithTip(forecastTemplate.getSetStockTTSet());
 
         //     forecastTemplate.getSetStockTTSet().stream().filter(set -> !set.getStockTipSaleSet().isEmpty()).map(SetStockTT::getIdStock).toList();
         if (idStockList == null || idStockList.isEmpty())
-            throw new NotEnoughData("Not specified stock to compile for requesting move from external database ");
+            throw new NotEnoughDataException("Not specified stock to compile for requesting move from external database ");
         List<String> codeArticList = forecastTemplate.getGoodsSet().stream().map(Goods::getCodArtic).toList();
         String start = forecastTemplate.getStartAnalysis().format(DateTimeFormatter.ofPattern("MM/dd/yyyy"));
         // String end=forecastTemplate.getEndAnalysis().format(DateTimeFormatter.ofPattern("MM/dd/yyyy"));
@@ -169,12 +169,12 @@ public class FromExternalDatabaseService {
     }
 
     @Transactional
-    public ForecastTemplate saveListOfRestForForecast(ForecastTemplate forecastTemplate) throws NotEnoughData {
+    public ForecastTemplate saveListOfRestForForecast(ForecastTemplate forecastTemplate) throws NotEnoughDataException {
         if (forecastTemplate.getGoodsSet().isEmpty())
-            throw new NotEnoughData("Not goods to compile for requesting rest from external database ");
+            throw new NotEnoughDataException("Not goods to compile for requesting rest from external database ");
         List<Long> idStockList = forecastTemplate.getSetStockTTSet().stream().map(SetStockTT::getIdStock).toList();
         if (idStockList == null || idStockList.isEmpty())
-            throw new NotEnoughData("Not specified stock to compile for requesting rest from external database ");
+            throw new NotEnoughDataException("Not specified stock to compile for requesting rest from external database ");
         List<String> codeArticList = forecastTemplate.getGoodsSet().stream().map(Goods::getCodArtic).toList();
         List<RestDtoIn> restDtoInList = restDao.getRestByGoodsAndStockList(new GetDataByGoodsListAndStockListDtoOut(codeArticList, idStockList));
         if (restDtoInList == null) return forecastTemplate;
@@ -195,13 +195,13 @@ public class FromExternalDatabaseService {
     }
 
     @Transactional
-    public ForecastTemplate saveStockParam(ForecastTemplate forecastTemplate) throws NotEnoughData {
+    public ForecastTemplate saveStockParam(ForecastTemplate forecastTemplate) throws NotEnoughDataException {
         if (forecastTemplate.getGoodsSet().isEmpty())
-            throw new NotEnoughData("Not goods to compile for requesting stockParam from external database ");
+            throw new NotEnoughDataException("Not goods to compile for requesting stockParam from external database ");
         List<Long> idStockList = listStockOnlyWithTip(forecastTemplate.getSetStockTTSet());
         //       forecastTemplate.getSetStockTTSet().stream().filter(set -> !set.getStockTipSaleSet().isEmpty()).map(SetStockTT::getIdStock).toList();
         if (idStockList == null || idStockList.isEmpty())
-            throw new NotEnoughData("Not specified stock to compile for requesting stockParam from external database ");
+            throw new NotEnoughDataException("Not specified stock to compile for requesting stockParam from external database ");
         // List<String> codeArticList=forecastTemplate.getGoodsSet().stream().map(Goods::getCodArtic).toList();
         List<StockParamDtoIn> stockParamDtoIns = stockParamDao.getStockParamByGoodsAndStockList(
                 new GetDataByGoodsListAndStockListDtoOut(getCodeGoods(forecastTemplate.getGoodsSet()), idStockList));

@@ -1,4 +1,4 @@
-package org.example.exeption;
+package org.example.exception;
 
 public class NotFindByID extends Exception{
     public NotFindByID(String message) {

@@ -8,11 +8,10 @@ import jakarta.validation.constraints.Size;
 import org.example.dto.data_from_db.out.GoodsDtoOut;
 import org.example.dto.forecast.out.ForecastTemplateDtoOut;
 import org.example.entity.data_from_db.Goods;
-import org.example.entity.forecast.ForecastTemplate;
-import org.example.exeption.DataNotValid;
-import org.example.exeption.NotEnoughData;
-import org.example.exeption.NotFindByID;
-import org.example.exeption.RabbitNotAnswer;
+import org.example.exception.DataNotValidException;
+import org.example.exception.NotEnoughDataException;
+import org.example.exception.NotFindByID;
+import org.example.exception.RabbitNotAnswerException;
 import org.example.mapper.data_from_db.out.DataFromDbMapper;
 import org.example.mapper.forecast.out.ForecastOutMapper;
 import org.example.service.MakeForecastOnSupplierService;
@@ -56,7 +55,7 @@ public class ForecastController {
                                               @PathVariable("supplier") @Size(min = 1,max = 8)
                                               @Parameter(description = "goods of this supplier will participate in the forecast")
                                               String supplier
-                                              ) throws NotEnoughData, DataNotValid, ConnectException, RabbitNotAnswer {
+                                              ) throws NotEnoughDataException, DataNotValidException, ConnectException, RabbitNotAnswerException {
             return forecastOutMapper.toForecastTemplateDtoOut(makeForecastOnSupplierService.run(id,supplier));
     }
 
