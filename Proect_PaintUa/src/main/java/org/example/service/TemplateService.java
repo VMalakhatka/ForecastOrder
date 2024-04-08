@@ -2,7 +2,7 @@ package org.example.service;
 
 import org.example.dto.template.out.TemplateOutDTO;
 import org.example.entity.templates.Template;
-import org.example.exception.NotFindByID;
+import org.example.exception.NotFindByIDException;
 import org.example.mapper.template.out.TemplatesOutMapper;
 import org.example.repository.templates.TemplateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,10 +28,10 @@ public class TemplateService {
                 collect(Collectors.toList());
     }
 
-    public TemplateOutDTO getTemplateById(long id) throws NotFindByID {
+    public TemplateOutDTO getTemplateById(long id) throws NotFindByIDException {
         Optional<Template> templateOptional=templateRepository.findById(id);
         Template template=templateOptional.orElseThrow(()->
-                new NotFindByID("there is no such template."));
+                new NotFindByIDException("there is no such template."));
         return templatesOutMapper.toTemplateOutDTO(template);
     }
 }

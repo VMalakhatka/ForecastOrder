@@ -3,10 +3,7 @@ package org.example.entity.templates;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.example.entity.entity_enum.StockRole;
 
 import java.util.HashSet;
@@ -15,6 +12,8 @@ import java.util.Set;
 @Entity
 @Table(name = "set_stock_TT_template")
 @NoArgsConstructor
+@Builder
+@AllArgsConstructor
 @Data
 @ToString(exclude = {"template", "stockTipSaleTemplateHashSet"})
 @EqualsAndHashCode(exclude = {"template", "stockTipSaleTemplateHashSet"})

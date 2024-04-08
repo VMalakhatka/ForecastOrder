@@ -2,10 +2,7 @@ package org.example.entity.templates;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -15,6 +12,8 @@ import java.util.Set;
 @Table(name = "template")
 @NoArgsConstructor
 @Data
+@Builder
+@AllArgsConstructor
 @ToString(exclude = {"setStockTtTemplates"})
 @EqualsAndHashCode(exclude = {"setStockTtTemplates"})
 public class Template {

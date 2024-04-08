@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>User registration form</title>
+</head>
+<body>
+<main>
+    <h1>Registration</h1>
+    <form th:object="${registrationForm}"
+          th:action="@{/auth/registration}"
+          method="post">
+        <div>
+            <label for="firstName">First name</label>
+            <input id="firstName" type="text"
+                   th:field="*{firstName}">
+            <p style="color: red"
+               th:if="${#fields.hasErrors('firstName')}"
+               th:text="${#strings.listJoin(#fields.errors('firstName'), ', ')}"></p>
+        </div>
+        <div>
+            <label for="lastName">Last name</label>
+            <input id="lastName" type="text"
+                   th:field="*{lastName}">
+            <p style="color: red"
+               th:if="${#fields.hasErrors('lastName')}"
+               th:text="${#strings.listJoin(#fields.errors('lastName'), ', ')}"></p>
+        </div>
+        <div>
+            <label for="email">Email address</label>
+            <input id="email" type="email"
+                   th:field="*{email}">
+            <p style="color: red"
+               th:if="${#fields.hasErrors('email')}"
+               th:text="${#strings.listJoin(#fields.errors('email'), ', ')}"></p>
+        </div>
+        <div>
+            <label for="birthDate">Date of birth</label>
+            <input id="birthDate" type="date"
+                   th:field="*{birthDate}">
+            <p style="color: red"
+               th:if="${#fields.hasErrors('birthDate')}"
+               th:text="${#strings.listJoin(#fields.errors('birthDate'), ', ')}"></p>
+        </div>
+        <div>
+            <label for="password">Password</label>
+            <input id="password" type="password"
+                   th:field="*{password}">
+            <p style="color: red"
+               th:if="${#fields.hasErrors('lastName')}"
+               th:text="${#strings.listJoin(#fields.errors('lastName'), ', ')}"></p>
+        </div>
+        <button type="submit">Register user</button>
+    </form>
+</main>
+
+<a href="../../">Home</a>
+</body>
+</html>

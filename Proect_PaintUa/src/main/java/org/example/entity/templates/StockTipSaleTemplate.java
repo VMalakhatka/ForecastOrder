@@ -2,15 +2,14 @@ package org.example.entity.templates;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.example.entity.entity_enum.TypDocmPr;
 
 @Entity
 @Table(name = "stock_tip_sale_templete")
 @NoArgsConstructor
+@Builder
+@AllArgsConstructor
 @Data
 @ToString(exclude = {"setStockTtTemplate"})
 @EqualsAndHashCode(exclude = {"setStockTtTemplate"})

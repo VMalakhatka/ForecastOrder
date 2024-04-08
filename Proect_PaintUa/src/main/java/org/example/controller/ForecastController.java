@@ -4,13 +4,14 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import org.example.dto.data_from_db.out.GoodsDtoOut;
 import org.example.dto.forecast.out.ForecastTemplateDtoOut;
 import org.example.entity.data_from_db.Goods;
 import org.example.exception.DataNotValidException;
 import org.example.exception.NotEnoughDataException;
-import org.example.exception.NotFindByID;
+import org.example.exception.NotFindByIDException;
 import org.example.exception.RabbitNotAnswerException;
 import org.example.mapper.data_from_db.out.DataFromDbMapper;
 import org.example.mapper.forecast.out.ForecastOutMapper;
@@ -52,7 +53,7 @@ public class ForecastController {
     public ForecastTemplateDtoOut runForecast(@PathVariable("id") @Min(0)
                                                   @Parameter(description = "the template ID that should be used to forecast")
                                                   long id,
-                                              @PathVariable("supplier") @Size(min = 1,max = 8)
+                                              @PathVariable("supplier") @Size(min = 1,max = 8) @NotBlank
                                               @Parameter(description = "goods of this supplier will participate in the forecast")
                                               String supplier
                                               ) throws NotEnoughDataException, DataNotValidException, ConnectException, RabbitNotAnswerException {
@@ -77,7 +78,7 @@ public class ForecastController {
     public ForecastTemplateDtoOut getForecastHeader(@PathVariable("id") @Min(0) @Parameter(description = "Forecast Id") long id){
         try {
             return forecastOutMapper.toForecastTemplateDtoOut(makeForecastOnSupplierService.getForecastById(id));
-        } catch (NotFindByID e) {
+        } catch (NotFindByIDException e) {
             throw new RuntimeException(e);
         }
     }
@@ -95,7 +96,7 @@ public class ForecastController {
             return goodsDtoOuts;
 //            return makeForecastOnSupplierService.getGoodsListByForecastId(id).stream().
 //                    map(g->dataFromDbMapper.toGoodsDtoOut(g)).collect(Collectors.toList());
-        } catch (NotFindByID e) {
+        } catch (NotFindByIDException e) {
             throw new RuntimeException(e);
         }
     }
@@ -105,7 +106,7 @@ public class ForecastController {
             summary = "Delete Forecast Id",
             description = "Deletes the forecast by id, with all nested structures "
     )
-    public void delForecastGoods(@PathVariable("id") @Min(0) @Parameter(description = "Forecast Id") long id) throws NotFindByID {
+    public void delForecastGoods(@PathVariable("id") @Min(0) @Parameter(description = "Forecast Id") long id) throws NotFindByIDException {
         makeForecastOnSupplierService.delForecastTemplate(id);
     }
 

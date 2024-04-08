@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Min;
 import org.example.dto.template.out.TemplateOutDTO;
-import org.example.exception.NotFindByID;
+import org.example.exception.NotFindByIDException;
 import org.example.service.TemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -49,7 +49,7 @@ public class TemplatesForecastConroller {
                                               long id){
         try {
             return templateService.getTemplateById(id);
-        } catch (NotFindByID e) {
+        } catch (NotFindByIDException e) {
             throw new RuntimeException(e);
         }
     }

@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @EnableRabbit
 public class HealsClient {
 
-    @RabbitListener(queues = RabbitConfig.QUEUE_FOR_MOVE)
+    @RabbitListener(queues = RabbitConfig.QUEUE_HEALS)
     public Boolean healsResponse(@Payload String message){
         return true;
     }

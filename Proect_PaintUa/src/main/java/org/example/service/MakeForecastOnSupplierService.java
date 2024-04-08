@@ -14,7 +14,7 @@ import org.example.entity.templates.StockTipSaleTemplate;
 import org.example.entity.templates.Template;
 import org.example.exception.DataNotValidException;
 import org.example.exception.NotEnoughDataException;
-import org.example.exception.NotFindByID;
+import org.example.exception.NotFindByIDException;
 import org.example.exception.RabbitNotAnswerException;
 import org.example.repository.forecast.ForecastTemplateRepository;
 import org.example.repository.templates.TemplateRepository;
@@ -58,24 +58,24 @@ public class MakeForecastOnSupplierService {
     }
 
     @Transactional
-    public void delForecastTemplate(long id) throws NotFindByID {
+    public void delForecastTemplate(long id) throws NotFindByIDException {
         ForecastTemplate fT = forecastTemplateRepository.findById(id).orElseThrow(() ->
-                new NotFindByID("Could not find the forecast by ID in the delForecastTemplate method"));
+                new NotFindByIDException("Could not find the forecast by ID in the delForecastTemplate method"));
         forecastTemplateRepository.delete(fT);
     }
 
-    public ForecastTemplate getForecastById(long id) throws NotFindByID {
+    public ForecastTemplate getForecastById(long id) throws NotFindByIDException {
         return forecastTemplateRepository.findById(id).orElseThrow(() ->
-                new NotFindByID("forecast not found by ID"));
+                new NotFindByIDException("forecast not found by ID"));
     }
 
-    public Set<Goods> getGoodsListByForecastId(long id) throws NotFindByID {
+    public Set<Goods> getGoodsListByForecastId(long id) throws NotFindByIDException {
 //        ForecastTemplate fT=forecastTemplateRepository.findById(id).orElseThrow(()->
-//                  new NotFindByID("forecast not found by ID when you searched for the product "));
+//                  new NotFindByIDException("forecast not found by ID when you searched for the product "));
 //        Set<Goods> goodsSet=fT.getGoodsSet();
 //        return goodsSet;
         return forecastTemplateRepository.findById(id).orElseThrow(() ->
-                new NotFindByID("forecast not found by ID when you searched for the product ")).getGoodsSet();
+                new NotFindByIDException("forecast not found by ID when you searched for the product ")).getGoodsSet();
     }
 
 
