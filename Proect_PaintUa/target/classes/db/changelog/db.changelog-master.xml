@@ -12,15 +12,30 @@ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
     <!--    </changeSet>-->
 
 
-    <changeSet id="create_sequence" author="Malakhatka">
+<!--    <changeSet id="create_sequence" author="Malakhatka">-->
+<!--        <preConditions onFail="MARK_RAN">-->
+<!--            <not>-->
+<!--                <sequenceExists sequenceName="assemble_sequence"/>-->
+<!--            </not>-->
+<!--        </preConditions>-->
+<!--        <sql>-->
+<!--            CREATE SEQUENCE assemble_sequence START 1;-->
+<!--        </sql>-->
+<!--    </changeSet>-->
+
+    <changeSet id="create_sequence2" author="Malakhatka">
         <preConditions onFail="MARK_RAN">
             <not>
                 <sequenceExists sequenceName="assemble_sequence"/>
             </not>
         </preConditions>
-        <sql>
-            CREATE SEQUENCE assemble_sequence START 1;
-        </sql>
+        <createSequence  cacheSize="371717"
+                         dataType="long"
+                         incrementBy="1"
+                         minValue="1"
+                         schemaName="public"
+                         sequenceName="assemble_sequence"
+                         startValue="1"/>
     </changeSet>
 
 <!--    <changeSet id="Load data from CSV file template_doc" author="Malakhatka">-->

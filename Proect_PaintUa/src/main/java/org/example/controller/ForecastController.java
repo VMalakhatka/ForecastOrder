@@ -49,7 +49,7 @@ public class ForecastController {
             summary = "By template number and supplier - starts generation of a new forecast",
             description = "The following templates are given for client selection"
     )
-    @PostMapping("{id}/{supplier}")
+    @PostMapping("/{id}/supplier/{supplier}")
     public ForecastTemplateDtoOut runForecast(@PathVariable("id") @Min(0)
                                                   @Parameter(description = "the template ID that should be used to forecast")
                                                   long id,
@@ -88,17 +88,11 @@ public class ForecastController {
             summary = "List of goods by Forecast Id",
             description = "List of products linked to the forecast header"
     )
-    public List<GoodsDtoOut> getForecastGoods(@PathVariable("id") @Min(0) @Parameter(description = "Forecast Id") long id){
-        try {
+    public List<GoodsDtoOut> getForecastGoods(@PathVariable("id") @Min(0) @Parameter(description = "Forecast Id") long id)
+            throws NotFindByIDException {
             Set<Goods> goodsSet=makeForecastOnSupplierService.getGoodsListByForecastId(id);
-            List<GoodsDtoOut> goodsDtoOuts=goodsSet.stream().
+        return goodsSet.stream().
                     map(g->dataFromDbMapper.toGoodsDtoOut(g)).toList();
-            return goodsDtoOuts;
-//            return makeForecastOnSupplierService.getGoodsListByForecastId(id).stream().
-//                    map(g->dataFromDbMapper.toGoodsDtoOut(g)).collect(Collectors.toList());
-        } catch (NotFindByIDException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @DeleteMapping("/forecast_goods/{id}")

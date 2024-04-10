@@ -22,8 +22,7 @@ public class AssembleDaoImp implements AssembleDao {
 
     @Override
     public List<AssembleDtoIn> getAssembleByGoodsList(GetDataByGoodsListAndStockListDtoOut dto, Object o) {
-        ParameterizedTypeReference<List<AssembleDtoIn>> responseType = new ParameterizedTypeReference<List<AssembleDtoIn>>() {};
-        List<AssembleDtoIn> stockParamDtoIns=template.convertSendAndReceiveAsType(RabbitConfig.QUEUE_FOR_ASSEMBLE,dto,responseType);
-        return stockParamDtoIns;
+        ParameterizedTypeReference<List<AssembleDtoIn>> responseType = new ParameterizedTypeReference<>() {};
+        return template.convertSendAndReceiveAsType(RabbitConfig.QUEUE_FOR_ASSEMBLE,dto,responseType);
     }
 }

@@ -17,8 +17,9 @@ public class DataFromDbMapper {
         return new GoodsDtoOut(g.getId(),g.getCodArtic(),g.getNameArtic(),g.getUchetCena(),g.getCenaValt(),g.getCodValt(),
                 g.getEdnVUpak(),g.getSupplier(),g.isFrost(),g.getAssembl(),g.getForecast().getNotOnStock(),g.getForecast().getNotSaleAndSale(),
                 g.getForecast().getSale(),g.getForecast().getRestTT(),g.getForecast().getNeedToMove(),g.getForecast().getOptForecast(),
-                g.getForecast().getOrderWithoutPack(),g.getForecast().getOrderTT(),g.getForecastTemplate().getId(),
-                g.getStockParams().stream().map(this::toStockParamDtoOut).collect(Collectors.toList())
+                g.getForecast().getOrderWithoutPack(),g.getForecast().getOrderTT()
+               // ,g.getForecastTemplate().getId()
+                , g.getStockParams().stream().map(this::toStockParamDtoOut).collect(Collectors.toList())
                 ,g.getAssemblePerentSet().stream().map(this::toAssembleDtoOut).collect(Collectors.toList())
                 ,g.getAssembleChild()==null?null:toAssembleDtoOut(g.getAssembleChild())
                 );

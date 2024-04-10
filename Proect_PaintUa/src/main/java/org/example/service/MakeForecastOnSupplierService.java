@@ -70,10 +70,6 @@ public class MakeForecastOnSupplierService {
     }
 
     public Set<Goods> getGoodsListByForecastId(long id) throws NotFindByIDException {
-//        ForecastTemplate fT=forecastTemplateRepository.findById(id).orElseThrow(()->
-//                  new NotFindByIDException("forecast not found by ID when you searched for the product "));
-//        Set<Goods> goodsSet=fT.getGoodsSet();
-//        return goodsSet;
         return forecastTemplateRepository.findById(id).orElseThrow(() ->
                 new NotFindByIDException("forecast not found by ID when you searched for the product ")).getGoodsSet();
     }

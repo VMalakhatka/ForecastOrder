@@ -27,7 +27,7 @@ public record GoodsDtoOut(
         double optForecast,
         double orderWithoutPack,
         double orderTT,
-        long forecastTemplateId,
+       // long forecastTemplateId,
         List<StockParamDtoOut> stockParamDtoOuts
         ,List<AssembleDtoOut> assembleParentDtoOuts
         ,AssembleDtoOut assembleChildDtoOut

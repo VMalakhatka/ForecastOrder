@@ -7,6 +7,7 @@ import org.example.entity.forecast.SetStockTT;
 import org.example.entity.templates.Template;
 import org.example.exception.DataNotValidException;
 import org.example.exception.NotEnoughDataException;
+import org.example.exception.NotFindByIDException;
 import org.example.exception.RabbitNotAnswerException;
 import org.example.repository.forecast.ForecastTemplateRepository;
 import org.example.repository.templates.TemplateRepository;
@@ -25,11 +26,12 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
 
 
 @ExtendWith(MockitoExtension.class)
 class MakeForecastOnSupplierServiceTest {
-    private SetDataForTest setDataForTest=new SetDataForTest();
+    private final SetDataForTest setDataForTest=new SetDataForTest();
     private Template template = new Template();
     @Mock
     private TemplateRepository templateRepository;
@@ -53,13 +55,49 @@ class MakeForecastOnSupplierServiceTest {
         template = new Template();
         setDataForTest.setTemplate(template,dT);
 
-        Mockito.when(templateRepository.findById(1L)).thenReturn(Optional.of(template));
+        Mockito.lenient().when(templateRepository.findById(1L)).thenReturn(Optional.of(template));
         Mockito.when(forecastTemplateRepository.save(any(ForecastTemplate.class))).thenAnswer(invocation -> {
             ForecastTemplate fT=invocation.getArgument(0);
             fT.setId(1L);
             return fT;
         });
         setDataForTest.setStockAndTipForTaplates(template,dT);
+    }
+
+    @Test
+    void delForecastTemplateTest() throws NotFindByIDException {
+        Mockito.reset(forecastTemplateRepository);
+        Mockito.when(forecastTemplateRepository.findById(1L)).thenReturn(Optional.empty());
+        assertThrows(NotFindByIDException.class,()->makeForecastOnSupplierService.delForecastTemplate(1L),
+                "Could not find the forecast by ID in the delForecastTemplate method");
+        setDataForTest.setForecast(forecastTemplate,dT);
+        Mockito.reset(forecastTemplateRepository);
+        Mockito.when(forecastTemplateRepository.findById(1L)).thenReturn(Optional.of(forecastTemplate));
+
+        makeForecastOnSupplierService.delForecastTemplate(1L);
+        Mockito.verify(forecastTemplateRepository, times(1)).delete(forecastTemplate);
+    }
+
+    @Test
+    void getForecastByIdTest() throws NotFindByIDException {
+        Mockito.reset(forecastTemplateRepository);
+        Mockito.when(forecastTemplateRepository.findById(1L)).thenReturn(Optional.empty());
+        assertThrows(NotFindByIDException.class,()->makeForecastOnSupplierService.getForecastById(1L),
+                "forecast not found by ID");
+        setDataForTest.setForecast(forecastTemplate,dT);
+        Mockito.reset(forecastTemplateRepository);
+        Mockito.when(forecastTemplateRepository.findById(1L)).thenReturn(Optional.of(forecastTemplate));
+
+        ForecastTemplate fT=makeForecastOnSupplierService.getForecastById(1L);
+        assertEquals(forecastTemplate,fT);
+    }
+
+    @Test
+    void getGoodsListByForecastIdTest(){
+        Mockito.reset(forecastTemplateRepository);
+        Mockito.when(forecastTemplateRepository.findById(1L)).thenReturn(Optional.empty());
+        assertThrows(NotFindByIDException.class,()->makeForecastOnSupplierService.getGoodsListByForecastId(1L),
+                "forecast not found by ID when you searched for the product ");
     }
 
     @Test

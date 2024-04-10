@@ -23,10 +23,10 @@ public class GoodsInDaoImpl implements GoodsInDao{
 
     @Override
     public List<GoodsDtoIn> getGoodsBySupplierAndStockId(String typeOfForecast,String supplier,long idStock) throws RabbitNotAnswerException {
-        ParameterizedTypeReference<Boolean> healsType = new ParameterizedTypeReference<Boolean>() {};
+        ParameterizedTypeReference<Boolean> healsType = new ParameterizedTypeReference<>() {};
         Boolean goodHeals=template.convertSendAndReceiveAsType(RabbitConfig.QUEUE_HEALS, "Yow are your?",healsType);
         if(goodHeals==null) throw new RabbitNotAnswerException(" RabbitMQ not answer ");
-        ParameterizedTypeReference<List<GoodsDtoIn>> responseType = new ParameterizedTypeReference<List<GoodsDtoIn>>() {};
+        ParameterizedTypeReference<List<GoodsDtoIn>> responseType = new ParameterizedTypeReference<>() {};
         return template.convertSendAndReceiveAsType(RabbitConfig.QUEUE_NAME,
                 new getGoodsDtoOut(typeOfForecast,supplier,idStock),responseType);
     }
