@@ -20,8 +20,7 @@ public class RestDaoImp implements RestDao{
 
     @Override
     public List<RestDtoIn> getRestByGoodsAndStockList(GetDataByGoodsListAndStockListDtoOut dto) {
-        ParameterizedTypeReference<List<RestDtoIn>> responseType = new ParameterizedTypeReference<List<RestDtoIn>>() {};
-        List<RestDtoIn> restDtoIns=template.convertSendAndReceiveAsType(RabbitConfig.QUEUE_FOR_REST,dto,responseType);
-        return restDtoIns;
+        ParameterizedTypeReference<List<RestDtoIn>> responseType = new ParameterizedTypeReference<>() {};
+        return template.convertSendAndReceiveAsType(RabbitConfig.QUEUE_FOR_REST,dto,responseType);
     }
 }

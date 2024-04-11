@@ -1,8 +1,6 @@
 package org.example.dto.template.out;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.Column;
-import org.example.entity.templates.SetStockTtTemplate;
 
 import java.time.LocalDateTime;
 import java.util.List;

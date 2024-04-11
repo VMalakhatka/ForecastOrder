@@ -99,10 +99,25 @@ public class MakeForecastOnSupplierService {
         dayWhenGoodsNotOnStock(forecastTemplateSaved);
         countNotSaleAndOrderAndMin(forecastTemplateSaved);
         plusKinder(forecastTemplateSaved);
+        orderForTT(forecastTemplateSaved);
 
         forecastTemplateSaved = forecastTemplateRepository.save(forecastTemplate);
 
         return forecastTemplateSaved;
+    }
+
+    private void orderForTT(ForecastTemplate forecastTemplate) {
+        Set<Goods> gS=forecastTemplate.getGoodsSet();
+        for(Goods g:gS){
+            StockParam stockParam=g.getStockParams().stream().filter(sp->sp.getIdStock()==forecastTemplate.getIdMainStock()).findFirst().orElse(null);
+            if(stockParam!=null && stockParam.getMinTvrZap()>0 && stockParam.getTipOrder()>10 && g.getForecast().getOrderWithoutPack()>0) { // TipOrder -- 11 и больше - заказ у поставщика
+                double order=Math.floor(g.getForecast().getOrderWithoutPack()+0.7); //округляем от 0.3 в большую сторону
+                if((order + g.getForecast().getRestTT())>=stockParam.getMaxTvrZap())
+                    order=stockParam.getMaxTvrZap()-g.getForecast().getRestTT();
+                order=Math.floor(order/g.getEdnVUpak())*g.getEdnVUpak();
+                g.getForecast().setOrderTT(order);
+            }
+        }
     }
 
     private double getKindQuantity(Goods good) {

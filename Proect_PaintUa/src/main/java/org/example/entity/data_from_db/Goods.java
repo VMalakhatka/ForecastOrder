@@ -1,9 +1,11 @@
 package org.example.entity.data_from_db;
 
-import jakarta.annotation.PostConstruct;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.example.entity.forecast.Forecast;
 import org.example.entity.forecast.ForecastTemplate;
 

@@ -20,8 +20,7 @@ public class StockParamDaoImp implements StockParamDao{
 
     @Override
     public List<StockParamDtoIn> getStockParamByGoodsAndStockList(GetDataByGoodsListAndStockListDtoOut dto) {
-        ParameterizedTypeReference<List<StockParamDtoIn>> responseType = new ParameterizedTypeReference<List<StockParamDtoIn>>() {};
-        List<StockParamDtoIn> stockParamDtoIns=template.convertSendAndReceiveAsType(RabbitConfig.QUEUE_FOR_SOCK_PARAM,dto,responseType);
-        return stockParamDtoIns;
+        ParameterizedTypeReference<List<StockParamDtoIn>> responseType = new ParameterizedTypeReference<>() {};
+        return template.convertSendAndReceiveAsType(RabbitConfig.QUEUE_FOR_SOCK_PARAM,dto,responseType);
     }
 }

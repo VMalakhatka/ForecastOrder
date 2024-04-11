@@ -22,10 +22,8 @@ public class MoveInDaoImpl implements MoveInDao{
 
     @Override
     public List<MoveDtoIn> getMoveByGoodsListAndStockList(GeMoveByGoodsListAndStockListAndDataStartEndDtoOut getMove) {
-        ParameterizedTypeReference<List<MoveDtoIn>> responseType = new ParameterizedTypeReference<List<MoveDtoIn>>() {};
-        //GetMoveByGoodsListAndStockListDtoOut getMove=new GetMoveByGoodsListAndStockListDtoOut(namePredmList,idList,start,end);
-        List<MoveDtoIn> moveDtoIns=template.convertSendAndReceiveAsType(RabbitConfig.QUEUE_FOR_MOVE,getMove,responseType);
-        return moveDtoIns;
+        ParameterizedTypeReference<List<MoveDtoIn>> responseType = new ParameterizedTypeReference<>() {};
+        return template.convertSendAndReceiveAsType(RabbitConfig.QUEUE_FOR_MOVE,getMove,responseType);
     }
 
 }

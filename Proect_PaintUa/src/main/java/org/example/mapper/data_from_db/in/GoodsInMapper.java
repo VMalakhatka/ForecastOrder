@@ -1,6 +1,5 @@
 package org.example.mapper.data_from_db.in;
 
-import org.example.dao.GoodsInDao;
 import org.example.dto.data_from_db.in.GoodsDtoIn;
 import org.example.entity.data_from_db.Goods;
 import org.example.entity.forecast.Forecast;

@@ -1,15 +1,11 @@
 package org.example.repository.templates;
 
 import jakarta.annotation.PostConstruct;
-import org.example.entity.entity_enum.Authority;
 import org.example.entity.entity_enum.StockRole;
 import org.example.entity.entity_enum.TypDocmPr;
-import org.example.entity.entity_enum.TypeOfForecast;
 import org.example.entity.templates.SetStockTtTemplate;
 import org.example.entity.templates.StockTipSaleTemplate;
 import org.example.entity.templates.Template;
-
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
