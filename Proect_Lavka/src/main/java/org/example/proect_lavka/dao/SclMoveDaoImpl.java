@@ -37,7 +37,7 @@ public class SclMoveDaoImpl implements SclMoveDao {
 
         String idParams = String.join(",", idList.stream().map(String::valueOf).toList());
         String namePredmParams = String.join("','", namePredmList);
-        String sqlQuery = "SELECT * FROM SCL_MOVE WHERE NAME_PREDM IN ('" + namePredmParams + "') AND ID_SCLAD IN (" + idParams + ") AND DATE_PREDM>=? AND DATE_PREDM<=?;";
+        String sqlQuery = "SELECT * FROM SCL_MOVE WHERE STND_UCHET!=0 AND NAME_PREDM IN ('" + namePredmParams + "') AND ID_SCLAD IN (" + idParams + ") AND DATE_PREDM>=? AND DATE_PREDM<=?;";
 
         //TODO maximum length of query?
         // String sqlQuery = "SELECT * FROM SCL_MOVE WHERE NAME_PREDM IN (" + namePredmParams + ") AND ID_SCLAD=? AND DATE_PREDM>=? AND DATE_PREDM<=?;";

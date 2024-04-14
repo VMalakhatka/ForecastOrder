@@ -136,10 +136,10 @@ class MakeForecastOnSupplierServiceTest {
         assertEquals("KR-001",dT.getKreul1Goods().getCodArtic());
         assertEquals(6,dT.getKreul1Goods().getForecast().getSale());
         assertEquals(2,dT.getKreul1Goods().getForecast().getRestTT());
-        assertEquals(20,dT.getKreul1Goods().getForecast().getNotOnStock());
+        assertEquals(0,dT.getKreul1Goods().getForecast().getNotOnStock());
         assertEquals(5,dT.getKreul2Goods().getForecast().getRestTT());
         assertTrue((dT.getKreul1Goods().getForecast().getNotSaleAndSale()-18.666666666666664)<0.0001);
-        assertEquals(1.2,dT.getKreul2Goods().getForecast().getOrderWithoutPack());
+        assertEquals(9.2,dT.getKreul2Goods().getForecast().getOrderWithoutPack());
         assertEquals(7,dT.getKreul1Goods().getForecast().getOrderWithoutPack());
         assertEquals(6,dT.getKreul3Goods().getForecast().getSale());
     }

@@ -153,17 +153,17 @@ public class FromExternalDatabaseService {
             firstNamePredm = Objects.requireNonNull(dto).NamePredm();
             String finalFirstNamePredm = firstNamePredm;
             Goods goods = forecastTemplate.getGoodsSet().stream().filter(g -> g.getCodArtic().equals(finalFirstNamePredm)).findFirst().orElse(null);
-            if (goods == null) break;
-            while (true) {
-                goods.addGoodsMove(moveInMapper.toGoodsMove(dto));
-                if (!prQGoodsMoveIn.isEmpty())
-                    dto = prQGoodsMoveIn.poll();
-                else {
-                    dto = null;
-                    break;
+            if (goods!=null)
+                while (true) {
+                    goods.addGoodsMove(moveInMapper.toGoodsMove(dto));
+                    if (!prQGoodsMoveIn.isEmpty())
+                        dto = prQGoodsMoveIn.poll();
+                    else {
+                        dto = null;
+                        break;
+                    }
+                    if (!firstNamePredm.equals(dto.NamePredm())) break;
                 }
-                if (!firstNamePredm.equals(dto.NamePredm())) break;
-            }
         }
         return forecastTemplate;
     }

@@ -9,7 +9,8 @@ import java.sql.SQLException;
 public class SclArtcMapper implements RowMapper<SclArtc> {
     @Override
     public SclArtc mapRow(ResultSet rs, int rowNum) throws SQLException {
-        return new SclArtc(rs.getString("COD_ARTIC"),
+        return new SclArtc(
+                rs.getString("COD_ARTIC").replaceAll("\\s+$", ""),
                 rs.getString("NAME_ARTIC"),
                 rs.getDouble("CENA_VALT"),
                 rs.getString("COD_VALT"),

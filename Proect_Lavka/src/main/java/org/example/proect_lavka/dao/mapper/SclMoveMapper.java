@@ -12,7 +12,7 @@ public class SclMoveMapper implements RowMapper<SclMove> {
     @Override
     public SclMove mapRow(ResultSet rs, int rowNum) throws SQLException {
         return new SclMove(
-                rs.getString("NAME_PREDM"),
+                rs.getString("NAME_PREDM").replaceAll("\\s+$", ""),
                 rs.getDouble("UNICUM_NUM"),
                 rs.getLong("NUMDOCM_PR"),
                 rs.getString("NUMDCM_DOP"),

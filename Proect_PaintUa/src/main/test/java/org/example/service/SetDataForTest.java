@@ -90,6 +90,13 @@ public class SetDataForTest {
         dT.getKreul1Goods().addGoodsMove(dT.getMove2());
         dT.getKreul1Goods().addGoodsMove(dT.getMove3());
 
+        dT.getKreul2Goods().addGoodsMove(dT.getMove2_0());
+        dT.getKreul2Goods().addGoodsMove(dT.getMove2_1());
+        dT.getKreul2Goods().addGoodsMove(dT.getMove2_2());
+        dT.getKreul2Goods().addGoodsMove(dT.getMove2_3());
+        dT.getKreul2Goods().addGoodsMove(dT.getMove2_4());
+        dT.getKreul2Goods().addGoodsMove(dT.getMove2_5());
+
         dT.getKreul3Goods().addGoodsMove(dT.getMove1_19());
         dT.getKreul3Goods().addGoodsMove(dT.getMove2_19());
         dT.getKreul3Goods().addGoodsMove(dT.getMove3_19());

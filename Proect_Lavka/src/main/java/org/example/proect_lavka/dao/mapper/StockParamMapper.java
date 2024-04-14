@@ -10,7 +10,7 @@ import java.sql.SQLException;
 public class StockParamMapper implements RowMapper<StockParamDtoOut> {
     @Override
     public StockParamDtoOut mapRow(ResultSet rs, int rowNum) throws SQLException {
-        return new StockParamDtoOut(rs.getString("COD_ARTIC"),
+        return new StockParamDtoOut(rs.getString("COD_ARTIC").replaceAll("\\s+$", ""),
                 rs.getLong("ID_SCLAD")
                 ,
                 rs.getDouble("MIN_TVRZAP"),

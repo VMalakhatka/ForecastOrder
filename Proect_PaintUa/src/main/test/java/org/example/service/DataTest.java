@@ -108,6 +108,47 @@ public class DataTest{
     public final MoveDtoIn moveDtoIn3=new MoveDtoIn("KR-001",44,4,"/dop","ОПТОВИК",
             LocalDateTime.of(2024,3,5,0,0),3,"R","РАСХОДНИКИ",KievId);
 
+
+    public final GoodsMove move2_0=new GoodsMove(null,KievId,22,2,"dop","РОЗНКИЕВ",
+            LocalDateTime.of(2024,2,13,0,0),
+            3,0,TypDocmPr.R,"РОЗНИЦА");
+    public final GoodsMove move2_1=new GoodsMove(null,KievId,11,1,"dop","РОСА",
+            LocalDateTime.of(2024,2,22,0,0),
+            3,0,TypDocmPr.P,"ПРИХОД");
+    public final GoodsMove move2_2=new GoodsMove(null,KievId,22,2,"dop","РОЗНКИЕВ",
+            LocalDateTime.of(2024,2,28,0,0),
+            3,0,TypDocmPr.R,"РОЗНИЦА");
+    public final GoodsMove move2_3=new GoodsMove(null,KievId,33,3,"dop","РОСА",
+            LocalDateTime.of(2024,3,12,0,0),
+            3,0,TypDocmPr.P,"ПРИХОД");
+    public final GoodsMove move2_4=new GoodsMove(null,KievId,44,4,"dop","ОПТОВИК",
+            LocalDateTime.of(2024,3,19,0,0),
+            3,0,TypDocmPr.R,"РАСХОДНИКИ");
+    public final GoodsMove move2_5=new GoodsMove(null,KievId,55,5,"dop","РОСА",
+            LocalDateTime.of(2024,4,10,0,0),
+            5,0,TypDocmPr.P,"ПРИХОД");
+
+
+    public final MoveDtoIn moveDtoIn2_0=new MoveDtoIn("KR-002",22,2,"dop","РОЗНКИЕВ",
+            LocalDateTime.of(2024,2,13,0,0),
+            3,"R","РОЗНИЦА",KievId);
+    public final MoveDtoIn moveDtoIn2_1=new MoveDtoIn("KR-002",11,1,"dop","РОСА",
+            LocalDateTime.of(2024,2,22,0,0),
+            3,"P","ПРИХОД",KievId);
+    public final MoveDtoIn moveDtoIn2_2=new MoveDtoIn("KR-002",22,2,"dop","РОЗНКИЕВ",
+            LocalDateTime.of(2024,2,28,0,0),
+            3,"R","РОЗНИЦА",KievId);
+    public final MoveDtoIn moveDtoIn2_3=new MoveDtoIn("KR-002",33,3,"dop","РОСА",
+            LocalDateTime.of(2024,3,12,0,0),
+            3,"P","ПРИХОД",KievId);
+    public final MoveDtoIn moveDtoIn2_4=new MoveDtoIn("KR-002",44,4,"/dop","ОПТОВИК",
+            LocalDateTime.of(2024,3,19,0,0),
+            3,"R","РАСХОДНИКИ",KievId);
+    public final MoveDtoIn moveDtoIn2_5=new MoveDtoIn("KR-002",55,5,"dop","РОСА",
+            LocalDateTime.of(2024,4,10,0,0),
+            5,"P","ПРИХОД",KievId);
+
+
     public final GoodsMove move1_19=new GoodsMove(null,KievRasprId,222,2,"dop","РОЗНКИЕВ",
             LocalDateTime.of(2024,3,15,0,0),
             3,0,TypDocmPr.R,"РОЗНИЦА");
@@ -125,7 +166,7 @@ public class DataTest{
     public final MoveDtoIn moveDtoIn3_19=new MoveDtoIn("KR-003",444,4,"dop","РОСА",
             LocalDateTime.of(2024,3,5,0,0),3,"R","РАСХОДНИКИ",KievRasprId);
 
-    public List<MoveDtoIn> moveDtoInList=List.of(moveDtoIn1,moveDtoIn2,moveDtoIn3,moveDtoIn1_19,moveDtoIn2_19,moveDtoIn3_19);
+    public List<MoveDtoIn> moveDtoInList=List.of(moveDtoIn1,moveDtoIn2,moveDtoIn3,moveDtoIn2_0,moveDtoIn2_1,moveDtoIn2_2,moveDtoIn2_3,moveDtoIn2_4,moveDtoIn2_5,moveDtoIn1_19,moveDtoIn2_19,moveDtoIn3_19);
 
     public final Rest restKreul1Kiev =new Rest(null,KievId,1,1);
     public final Rest restKreul1KievRaspr =new Rest(null,KievRasprId,3,1);

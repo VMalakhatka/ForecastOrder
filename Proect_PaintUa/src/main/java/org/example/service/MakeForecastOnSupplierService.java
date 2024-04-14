@@ -251,27 +251,29 @@ public class MakeForecastOnSupplierService {
 
                     if (!moves.isEmpty()) {
                         long nullDay = 0;
-                        LocalDateTime setNul = forecastTemplate.getStartAnalysis();
                         double rest = goods.getRestSet().stream().filter(r -> r.getIdStock() == stock).findFirst().orElseThrow().getKonKolich();
+                        LocalDateTime setNul=forecastTemplate.getEndAnalysis();
                         double newRest;
-
                         while (!moves.isEmpty()) {
                             GoodsMove m = moves.poll();
                             m.setRest(rest);
                             newRest = rest + switch (m.getTypDocmPr()) {
-                                case P -> m.getQuantity();
-                                case R -> -m.getQuantity();
+                                case P -> -m.getQuantity();
+                                case R -> m.getQuantity();
                                 case S -> 0.0;
                             };
-                            if (m.getData().isAfter(forecastTemplate.getStartAnalysis())) {
+                            if (m.getData().isAfter(forecastTemplate.getStartAnalysis().minusDays(1)) && m.getData().isBefore(forecastTemplate.getEndAnalysis().plusDays(1))) {
                                 if (rest <= 0 && newRest > 0.0)
                                     nullDay += Math.abs(Duration.between(m.getData(), setNul).toDays());
                                 if (newRest <= 0 && rest > 0) setNul = m.getData();
+                            } else if (m.getData().isBefore(forecastTemplate.getStartAnalysis()) && setNul.isAfter(forecastTemplate.getStartAnalysis().minusDays(1)) && setNul.isBefore(forecastTemplate.getEndAnalysis().plusDays(1))
+                                    && newRest>0.0 && rest<=0) {
+                                nullDay += Math.abs(Duration.between(forecastTemplate.getStartAnalysis(), setNul).toDays());
                             }
                             rest = newRest;
                         }
-                        if (rest <= 0) // TODO but sum only stock with tips
-                            nullDay += Math.abs(Duration.between(forecastTemplate.getEndAnalysis(), setNul).toDays());
+                        if (rest <= 0 && setNul.isAfter(forecastTemplate.getStartAnalysis().minusDays(1))) // TODO but sum only stock with tips
+                            nullDay += Math.abs(Duration.between(forecastTemplate.getStartAnalysis(), setNul).toDays());
                         goods.getForecast().setNotOnStock(goods.getForecast().getNotOnStock() + nullDay);
                     }
                 });
