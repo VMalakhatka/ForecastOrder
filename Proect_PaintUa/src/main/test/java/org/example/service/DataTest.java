@@ -1,10 +1,10 @@
 package org.example.service;
 
 import lombok.Data;
-import org.example.dto.data_from_db.in.*;
-import org.example.entity.data_from_db.*;
-import org.example.entity.entity_enum.StockRole;
-import org.example.entity.entity_enum.TypDocmPr;
+import org.example.dto.dataFromDb.in.*;
+import org.example.entity.dataFromDb.*;
+import org.example.entity.entityEnum.StockRole;
+import org.example.entity.entityEnum.TypDocmPr;
 import org.example.entity.forecast.SetStockTT;
 import org.example.entity.forecast.StockTipSale;
 import org.example.entity.templates.SetStockTtTemplate;

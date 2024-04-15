@@ -1,8 +1,8 @@
 package org.example.repository.templates;
 
 import jakarta.annotation.PostConstruct;
-import org.example.entity.entity_enum.StockRole;
-import org.example.entity.entity_enum.TypDocmPr;
+import org.example.entity.entityEnum.StockRole;
+import org.example.entity.entityEnum.TypDocmPr;
 import org.example.entity.templates.SetStockTtTemplate;
 import org.example.entity.templates.StockTipSaleTemplate;
 import org.example.entity.templates.Template;

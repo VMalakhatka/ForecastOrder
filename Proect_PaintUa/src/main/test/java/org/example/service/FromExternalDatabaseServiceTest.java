@@ -1,21 +1,22 @@
 package org.example.service;
 
-import org.example.dao.*;
-import org.example.dto.data_from_db.in.GoodsDtoIn;
-import org.example.dto.data_from_db.out.GeMoveByGoodsListAndStockListAndDataStartEndDtoOut;
-import org.example.dto.data_from_db.out.GetDataByGoodsListAndStockListDtoOut;
-import org.example.entity.data_from_db.Assemble;
-import org.example.entity.data_from_db.Goods;
+
+import org.example.dto.dataFromDb.in.GoodsDtoIn;
+import org.example.dto.dataFromDb.out.GeMoveByGoodsListAndStockListAndDataStartEndDtoOut;
+import org.example.dto.dataFromDb.out.GetDataByGoodsListAndStockListDtoOut;
+import org.example.entity.dataFromDb.Assemble;
+import org.example.entity.dataFromDb.Goods;
 import org.example.entity.forecast.ForecastTemplate;
 import org.example.exception.DataNotValidException;
 import org.example.exception.NotEnoughDataException;
 import org.example.exception.RabbitNotAnswerException;
-import org.example.mapper.data_from_db.in.GoodsInMapper;
-import org.example.mapper.data_from_db.in.MoveInMapper;
-import org.example.mapper.data_from_db.in.RestMapper;
-import org.example.mapper.data_from_db.in.StockParamMapper;
-import org.example.repository.data_from_db.AssembleSequenceRepository;
-import org.example.repository.data_from_db.GoodsRepository;
+import org.example.mapper.dataFromDb.in.GoodsInMapper;
+import org.example.mapper.dataFromDb.in.MoveInMapper;
+import org.example.mapper.dataFromDb.in.RestMapper;
+import org.example.mapper.dataFromDb.in.StockParamMapper;
+import org.example.rabbitMQ.consumer.*;
+import org.example.repository.dataFromDb.AssembleSequenceRepository;
+import org.example.repository.dataFromDb.GoodsRepository;
 import org.example.repository.forecast.ForecastTemplateRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

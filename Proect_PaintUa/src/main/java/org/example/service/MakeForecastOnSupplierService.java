@@ -1,14 +1,14 @@
 package org.example.service;
 
 
-import org.example.entity.data_from_db.Assemble;
-import org.example.entity.data_from_db.Goods;
-import org.example.entity.data_from_db.GoodsMove;
-import org.example.entity.data_from_db.StockParam;
+import org.example.entity.dataFromDb.Assemble;
+import org.example.entity.dataFromDb.Goods;
+import org.example.entity.dataFromDb.GoodsMove;
+import org.example.entity.dataFromDb.StockParam;
 import org.example.entity.forecast.ForecastTemplate;
 import org.example.entity.forecast.SetStockTT;
 import org.example.entity.forecast.StockTipSale;
-import org.example.entity.entity_enum.TypeOfForecast;
+import org.example.entity.entityEnum.TypeOfForecast;
 import org.example.entity.templates.SetStockTtTemplate;
 import org.example.entity.templates.StockTipSaleTemplate;
 import org.example.entity.templates.Template;

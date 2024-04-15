@@ -3,7 +3,7 @@ package org.example.entity.user;
 import jakarta.persistence.*;
 import lombok.*;
 
-import org.example.entity.entity_enum.Authority;
+import org.example.entity.entityEnum.Authority;
 import org.example.entity.user.credentials.Credentials;
 import org.example.entity.user.registration.Registration;
 

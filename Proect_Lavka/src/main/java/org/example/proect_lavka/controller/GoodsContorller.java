@@ -7,9 +7,8 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 import org.example.proect_lavka.entity.SclArtc;
 import org.example.proect_lavka.entity.SclMove;
-import org.example.proect_lavka.client_rabbit.GoodsClient;
+import org.example.proect_lavka.rabbitMQ.Publisher.GoodsClient;
 import org.example.proect_lavka.service.GoodsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 

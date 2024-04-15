@@ -4,8 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.example.entity.data_from_db.Goods;
-import org.example.entity.entity_enum.TypeOfForecast;
+import org.example.entity.dataFromDb.Goods;
+import org.example.entity.entityEnum.TypeOfForecast;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;

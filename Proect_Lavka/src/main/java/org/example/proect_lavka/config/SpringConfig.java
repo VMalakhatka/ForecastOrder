@@ -25,11 +25,14 @@ import java.util.Random;
 @EnableWebMvc
 public class SpringConfig implements WebMvcConfigurer {
     private final ApplicationContext applicationContext;
+    private final DatabaseProperties databaseProperties;
 
     @Autowired
-    public SpringConfig(ApplicationContext applicationContext) {
+    public SpringConfig(ApplicationContext applicationContext, DatabaseProperties databaseProperties) {
         this.applicationContext = applicationContext;
+        this.databaseProperties = databaseProperties;
     }
+
 
     @Bean
     public SpringResourceTemplateResolver templateResolver() {
@@ -56,14 +59,24 @@ public class SpringConfig implements WebMvcConfigurer {
 
     }
 
+//    @Bean
+//    @DependsOn("databaseProperties")
+//    DataSource dataSource(DatabaseProperties databaseProperties) {
+//        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+//        dataSource.setDriverClassName(databaseProperties.driverClassName());
+//        dataSource.setUrl(databaseProperties.url());
+//        dataSource.setUsername(databaseProperties.username());
+//        dataSource.setPassword(databaseProperties.password());
+//        return dataSource;
+//    }
+
     @Bean
-    @DependsOn("databaseProperties")
-    DataSource dataSource(DatabaseProperties databaseProperties) {
+    DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName(databaseProperties.driverClassName());
-        dataSource.setUrl(databaseProperties.url());
-        dataSource.setUsername(databaseProperties.username());
-        dataSource.setPassword(databaseProperties.password());
+        dataSource.setDriverClassName(databaseProperties.getDriverClassName());
+        dataSource.setUrl(databaseProperties.getUrl());
+        dataSource.setUsername(databaseProperties.getUsername());
+        dataSource.setPassword(databaseProperties.getPassword());
         return dataSource;
     }
 

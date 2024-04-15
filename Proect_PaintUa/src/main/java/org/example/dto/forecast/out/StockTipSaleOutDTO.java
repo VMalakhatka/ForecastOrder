@@ -1,6 +1,6 @@
 package org.example.dto.forecast.out;
 
-import org.example.entity.entity_enum.TypDocmPr;
+import org.example.entity.entityEnum.TypDocmPr;
 
 public record StockTipSaleOutDTO(
         Long id,

@@ -1,6 +1,6 @@
 package org.example.dto.forecast.out;
 
-import org.example.entity.entity_enum.StockRole;
+import org.example.entity.entityEnum.StockRole;
 
 import java.util.List;
 

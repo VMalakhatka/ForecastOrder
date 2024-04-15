@@ -1,11 +1,9 @@
 package org.example.repository.forecast;
 
-import org.example.entity.data_from_db.Assemble;
-import org.example.entity.data_from_db.Goods;
-import org.example.entity.data_from_db.GoodsMove;
-import org.example.entity.data_from_db.StockParam;
+import org.example.entity.dataFromDb.Goods;
+import org.example.entity.dataFromDb.GoodsMove;
 import org.example.entity.forecast.ForecastTemplate;
-import org.example.repository.data_from_db.*;
+import org.example.repository.dataFromDb.*;
 import org.example.service.DataTest;
 import org.example.service.SetDataForTest;
 import org.junit.jupiter.api.AfterEach;

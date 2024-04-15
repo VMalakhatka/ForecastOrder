@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.example.entity.entity_enum.StockRole;
+import org.example.entity.entityEnum.StockRole;
 
 import java.util.HashSet;
 import java.util.Set;

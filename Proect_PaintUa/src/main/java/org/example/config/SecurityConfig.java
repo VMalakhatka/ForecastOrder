@@ -14,8 +14,8 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-import static org.example.entity.entity_enum.Authority.ROLE_READ;
-import static org.example.entity.entity_enum.Authority.ROLE_WRITE;
+import static org.example.entity.entityEnum.Authority.ROLE_READ;
+import static org.example.entity.entityEnum.Authority.ROLE_WRITE;
 
 @Configuration
 @EnableWebSecurity
