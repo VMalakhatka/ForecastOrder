@@ -72,5 +72,7 @@ public class ForecastTemplate {
         goods.setForecastTemplate(null);
     }
 
-
+    public boolean inForecastDate(LocalDateTime dateTime){
+        return dateTime.isAfter(this.startAnalysis.minusDays(1)) && dateTime.isBefore(this.endAnalysis.plusDays(1));
+    }
 }

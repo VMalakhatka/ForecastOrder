@@ -262,11 +262,13 @@ public class MakeForecastOnSupplierService {
                                 case R -> m.getQuantity();
                                 case S -> 0.0;
                             };
-                            if (m.getData().isAfter(forecastTemplate.getStartAnalysis().minusDays(1)) && m.getData().isBefore(forecastTemplate.getEndAnalysis().plusDays(1))) {
+                     //       if (m.getData().isAfter(forecastTemplate.getStartAnalysis().minusDays(1)) && m.getData().isBefore(forecastTemplate.getEndAnalysis().plusDays(1))) {
+                            if (forecastTemplate.inForecastDate(m.getData())) {
                                 if (rest <= 0 && newRest > 0.0)
                                     nullDay += Math.abs(Duration.between(m.getData(), setNul).toDays());
                                 if (newRest <= 0 && rest > 0) setNul = m.getData();
-                            } else if (m.getData().isBefore(forecastTemplate.getStartAnalysis()) && setNul.isAfter(forecastTemplate.getStartAnalysis().minusDays(1)) && setNul.isBefore(forecastTemplate.getEndAnalysis().plusDays(1))
+//                            } else if (m.getData().isBefore(forecastTemplate.getStartAnalysis()) && setNul.isAfter(forecastTemplate.getStartAnalysis().minusDays(1)) && setNul.isBefore(forecastTemplate.getEndAnalysis().plusDays(1))
+                            } else if (m.getData().isBefore(forecastTemplate.getStartAnalysis()) && forecastTemplate.inForecastDate(setNul)
                                     && newRest>0.0 && rest<=0) {
                                 nullDay += Math.abs(Duration.between(forecastTemplate.getStartAnalysis(), setNul).toDays());
                             }
@@ -295,10 +297,11 @@ public class MakeForecastOnSupplierService {
         Set<StockTipSale> tips = setStockTT.getStockTipSaleSet();
         if (Objects.requireNonNull(tips.stream().findFirst().orElse(null)).isEqual()) {
             forecastTemplate.getGoodsSet().forEach(goods -> goods.getGoodsMoveSet().forEach(move -> {
-                if (move.getData().isEqual(forecastTemplate.getStartAnalysis()) ||
-                        move.getData().isEqual(forecastTemplate.getEndAnalysis()) ||
-                        (move.getData().isAfter(forecastTemplate.getStartAnalysis()) &&
-                                move.getData().isBefore(forecastTemplate.getEndAnalysis())) &&
+//                if (move.getData().isEqual(forecastTemplate.getStartAnalysis()) ||
+//                        move.getData().isEqual(forecastTemplate.getEndAnalysis()) ||
+//                        (move.getData().isAfter(forecastTemplate.getStartAnalysis()) &&
+//                                move.getData().isBefore(forecastTemplate.getEndAnalysis())) &&
+                if (forecastTemplate.inForecastDate(move.getData()) &&
                                 stock == move.getIdStock()) {
                     tips.forEach(t -> {
                         boolean yes = false;
@@ -318,10 +321,11 @@ public class MakeForecastOnSupplierService {
             }));
         } else {
             forecastTemplate.getGoodsSet().forEach(goods -> goods.getGoodsMoveSet().forEach(move -> {
-                if (move.getData().isEqual(forecastTemplate.getStartAnalysis()) ||
-                        move.getData().isEqual(forecastTemplate.getEndAnalysis()) ||
-                        (move.getData().isAfter(forecastTemplate.getStartAnalysis()) &&
-                                move.getData().isBefore(forecastTemplate.getEndAnalysis())) &&
+//                if (move.getData().isEqual(forecastTemplate.getStartAnalysis()) ||
+//                        move.getData().isEqual(forecastTemplate.getEndAnalysis()) ||
+//                        (move.getData().isAfter(forecastTemplate.getStartAnalysis()) &&
+//                                move.getData().isBefore(forecastTemplate.getEndAnalysis())) &&
+                if (forecastTemplate.inForecastDate(move.getData()) &&
                                 stock == move.getIdStock()) {
                     AtomicBoolean no = new AtomicBoolean(false);
                     AtomicBoolean yes = new AtomicBoolean(false);

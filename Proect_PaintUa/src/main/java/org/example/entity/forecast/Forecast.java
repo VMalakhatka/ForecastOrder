@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 
 @Data
 @NoArgsConstructor
@@ -41,4 +43,5 @@ public class Forecast {
         this.orderWithoutPack = 0.0;
         this.orderTT = 0.0;
     }
+
 }

@@ -70,7 +70,6 @@ public class FromExternalDatabaseService {
         if (goodsDtoInList == null) throw new NotEnoughDataException("Not goods for forecast");
         goodsDtoInList.forEach(dto -> forecastTemplate.addGoods(goodsInMapper.toGoodsEntity(dto)));
         forecastTemplateRepository.save(forecastTemplate);
-        //TODO flash?
         return forecastTemplate;
     }
 

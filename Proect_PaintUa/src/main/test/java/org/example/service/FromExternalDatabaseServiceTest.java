@@ -236,4 +236,6 @@ class FromExternalDatabaseServiceTest {
         assertEquals(2,dT.getKreul1Goods().getStockParams().size());
         assertEquals(32, Objects.requireNonNull(dT.getKreulKinder1ForKinder1Goods().getStockParams().stream().findFirst().orElse(null)).getMaxTvrZap());
     }
+
+
 }
