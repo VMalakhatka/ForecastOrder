@@ -4,12 +4,19 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.example.entity.dataFromDb.Goods;
-import org.example.entity.entityEnum.TypeOfForecast;
+import org.example.entity.data.from.db.Goods;
+import org.example.entity.enums.TypeOfForecast;
+import org.example.entity.templates.Template;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
+
+/**
+ *Это копия шаблона {@link Template} он храниться на случай того что основной шаблон
+ * может быть изменен
+ * Также он служит указателем на весь прогноз - по номеру прогноза можно получить все данные
+ */
 
 @Entity
 @Table(name = "forecast_template")

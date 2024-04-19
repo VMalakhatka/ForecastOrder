@@ -14,42 +14,13 @@ import java.util.Random;
 @ComponentScan("org.example")
 @EnableWebMvc
 public class SpringConfig implements WebMvcConfigurer {
-//    private final ApplicationContext applicationContext;
-//
-//    @Autowired
-//    public SpringConfig(ApplicationContext applicationContext) {
-//        this.applicationContext = applicationContext;
-//    }
-//
-//    @Bean
-//    public SpringResourceTemplateResolver templateResolver() {
-//        SpringResourceTemplateResolver resolver = new SpringResourceTemplateResolver();
-//        resolver.setApplicationContext(applicationContext);
-//        resolver.setPrefix("/WEB-INF/views/");
-//        resolver.setSuffix(".html");
-//        return resolver;
-//    }
-//
-//    @Bean
-//    public SpringTemplateEngine templateEngine() {
-//        SpringTemplateEngine templateEngine = new SpringTemplateEngine();
-//        templateEngine.setTemplateResolver(templateResolver());
-//        templateEngine.setEnableSpringELCompiler(true);
-//        return templateEngine;
-//    }
+
 
     @Bean // Добавили для активации валидации
     public MethodValidationPostProcessor methodValidationPostProcessor() {
         return new MethodValidationPostProcessor();
     }
 
-//    @Override
-//    public void configureViewResolvers(ViewResolverRegistry registry) {
-//        ThymeleafViewResolver viewResolver = new ThymeleafViewResolver();
-//        viewResolver.setTemplateEngine(templateEngine());
-//        registry.viewResolver(viewResolver);
-//
-//    }
 
     @Bean
     public Random random() {

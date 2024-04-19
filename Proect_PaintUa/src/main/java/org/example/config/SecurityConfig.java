@@ -14,8 +14,8 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-import static org.example.entity.entityEnum.Authority.ROLE_READ;
-import static org.example.entity.entityEnum.Authority.ROLE_WRITE;
+import static org.example.entity.enums.Authority.ROLE_READ;
+import static org.example.entity.enums.Authority.ROLE_WRITE;
 
 @Configuration
 @EnableWebSecurity
@@ -62,7 +62,6 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder();
         return (NoOpPasswordEncoder) NoOpPasswordEncoder.getInstance(); // пока без шифрования пароля в БД
     }
 

@@ -1,7 +1,7 @@
 package org.example.dto.forecast.out;
 
 import org.example.dto.dataFromDb.out.GoodsDtoOut;
-import org.example.entity.entityEnum.TypeOfForecast;
+import org.example.entity.enums.TypeOfForecast;
 
 import java.time.LocalDateTime;
 import java.util.List;

@@ -3,7 +3,7 @@ package org.example.entity.templates;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.example.entity.entityEnum.TypDocmPr;
+import org.example.entity.enums.TypDocmPr;
 
 @Entity
 @Table(name = "stock_tip_sale_templete")

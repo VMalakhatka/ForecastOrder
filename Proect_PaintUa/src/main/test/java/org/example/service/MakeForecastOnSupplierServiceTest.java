@@ -1,7 +1,7 @@
 package org.example.service;
 
-import org.example.entity.entityEnum.StockRole;
-import org.example.entity.entityEnum.TypeOfForecast;
+import org.example.entity.enums.StockRole;
+import org.example.entity.enums.TypeOfForecast;
 import org.example.entity.forecast.ForecastTemplate;
 import org.example.entity.forecast.SetStockTT;
 import org.example.entity.templates.Template;

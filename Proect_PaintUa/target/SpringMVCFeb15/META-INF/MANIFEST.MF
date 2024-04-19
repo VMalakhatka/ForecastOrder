@@ -1,9 +1,0 @@
-Manifest-Version: 1.0
-Created-By: IntelliJ IDEA
-Built-By: AnaBox
-Build-Jdk: 17.0.8
-Implementation-Title: SpringMVCFeb15 Maven Webapp
-Implementation-Version: 1.0-SNAPSHOT
-Implementation-Vendor-Id: org.example
-Main-Class: ${start-class}
-

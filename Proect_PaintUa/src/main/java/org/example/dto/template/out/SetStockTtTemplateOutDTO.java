@@ -1,7 +1,7 @@
 package org.example.dto.template.out;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.example.entity.entityEnum.StockRole;
+import org.example.entity.enums.StockRole;
 
 import java.util.List;
 @Schema(description = "Вывод сохраненых шаблонов - информация о складе в шаблоне его роль ")
