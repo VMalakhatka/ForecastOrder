@@ -30,7 +30,7 @@ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
             </not>
         </preConditions>
         <createSequence  cacheSize="371717"
-                         dataType="long"
+                         dataType="bigint"
                          incrementBy="1"
                          minValue="1"
                          schemaName="public"
