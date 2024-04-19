@@ -1,14 +1,15 @@
 package org.example.service;
 
 
-import org.example.entity.dataFromDb.Assemble;
-import org.example.entity.dataFromDb.Goods;
-import org.example.entity.dataFromDb.GoodsMove;
-import org.example.entity.dataFromDb.StockParam;
+import org.example.entity.data.from.db.Assemble;
+import org.example.entity.data.from.db.Goods;
+import org.example.entity.data.from.db.GoodsMove;
+import org.example.entity.data.from.db.StockParam;
+import org.example.entity.forecast.Forecast;
 import org.example.entity.forecast.ForecastTemplate;
 import org.example.entity.forecast.SetStockTT;
 import org.example.entity.forecast.StockTipSale;
-import org.example.entity.entityEnum.TypeOfForecast;
+import org.example.entity.enums.TypeOfForecast;
 import org.example.entity.templates.SetStockTtTemplate;
 import org.example.entity.templates.StockTipSaleTemplate;
 import org.example.entity.templates.Template;
@@ -30,9 +31,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 /**
- * Сервис принимает на вход номер шаблона заказа, поставщика(по которому заказ формировать)
- * Дату начала анализа и конец анализа - если даты не заданы, то отсчитывается дата окончания
- * анализа от ткущей, Текущая дата - дата начала анализа
+ * Сервис формирует заказ по шаблону
  */
 @Service
 public class MakeForecastOnSupplierService {
@@ -74,7 +73,15 @@ public class MakeForecastOnSupplierService {
                 new NotFindByIDException("forecast not found by ID when you searched for the product ")).getGoodsSet();
     }
 
-
+    /**
+     * Метод принимает на вход номер шаблона заказа, поставщика или номер документа (по которому заказ формировать)
+     * Если в Шаблоне даты не заданы, то отсчитывается дата окончания анализа от текущей, Текущая дата - дата начала анализа
+     * @param id_template Номер шаблона для заказа
+     * @param supplier Поставщик или документ по которому отфильтровывается товар для заказа
+     * @return Entity {@link ForecastTemplate} - после формирования нового прогноза - возвращает шапку нового прогноза
+     * - по ней вы сможете найти всю информацию по прогнозу
+     * @throws DataNotValidException если нет такого шаблона
+     */
     public ForecastTemplate run(Long id_template, String supplier) throws DataNotValidException, NotEnoughDataException, ConnectException, RabbitNotAnswerException {
         Optional<Template> templateOptional = templateRepository.findById(id_template);
         if (templateOptional.isEmpty())
@@ -106,6 +113,13 @@ public class MakeForecastOnSupplierService {
         return forecastTemplateSaved;
     }
 
+    /**
+     * На основании данных из {@link Forecast} посчитанных ранее (заказ без округления до упаковки {@link Forecast#orderWithoutPack})
+     * если товар участвует в заказе то {@link StockParam#minTvrZap} должен быть больше 0 и товар должен быть разрешен к заказу от поставщика
+     * также при дробной части больше 0.3 - округляем в большую сторону
+     * при этом заказ + остаток на складе не должен превышать {@link StockParam#maxTvrZap}
+     * @param forecastTemplate - шапка заказа - которая содержит ссылку на весь заказ
+     */
     private void orderForTT(ForecastTemplate forecastTemplate) {
         Set<Goods> gS=forecastTemplate.getGoodsSet();
         for(Goods g:gS){
@@ -120,6 +134,13 @@ public class MakeForecastOnSupplierService {
         }
     }
 
+    /**
+     * Подсчитывает сколько необходимо добавить в прогноз родителю
+     * если у него есть дети - т е пропорционально составной части родителя
+     * складываются части от ребенка
+     * @param good Родитель у которого есть потомки
+     * @return возвращается сумма которую необходимо прибавить к родителю
+     */
     private double getKindQuantity(Goods good) {
         double sum = 0;
         if (!good.getAssemblePerentSet().isEmpty())
@@ -135,6 +156,11 @@ public class MakeForecastOnSupplierService {
         return sum;
     }
 
+    /**
+     * Проходится по списку товаров из прогноза и если есть наследники
+     * вызывает метод {@link MakeForecastOnSupplierService#getKindQuantity}
+     * @param forecastTemplate шапка текущего прогноза
+     */
     private void plusKinder(ForecastTemplate forecastTemplate) {
         forecastTemplate.getGoodsSet().forEach(good -> {
             if (good.getAssembl() == 1)
@@ -142,7 +168,10 @@ public class MakeForecastOnSupplierService {
         });
     }
 
-
+    /**
+     *
+     * @param forecastTemplate – шапка текущего прогноза
+     */
     private void countNotSaleAndOrderAndMin(ForecastTemplate forecastTemplate) {
         Set<Long> stockWithMin = forecastTemplate.getSetStockTTSet().stream().filter(SetStockTT::isMin).map(SetStockTT::getIdStock).collect(Collectors.toSet());
         forecastTemplate.getGoodsSet().forEach(goods -> {

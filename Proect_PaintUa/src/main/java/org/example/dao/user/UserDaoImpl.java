@@ -40,7 +40,6 @@ public class UserDaoImpl implements UserDao {
                 user
         ));
         entityManager.persist(user);
-        User newbie = findByCredentials(user.getFirstName(), user.getLastName(), user.getEmail()).orElseThrow();
         return user;
     }
 

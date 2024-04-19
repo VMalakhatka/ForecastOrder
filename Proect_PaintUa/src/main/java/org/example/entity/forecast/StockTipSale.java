@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.example.entity.entityEnum.TypDocmPr;
+import org.example.entity.enums.TypDocmPr;
 
 @Entity
 @Table(name = "stock_tip_sale")

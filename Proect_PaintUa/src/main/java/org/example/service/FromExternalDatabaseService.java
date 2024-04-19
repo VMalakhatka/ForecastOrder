@@ -3,22 +3,22 @@ package org.example.service;
 import org.example.dto.dataFromDb.in.*;
 import org.example.dto.dataFromDb.out.GeMoveByGoodsListAndStockListAndDataStartEndDtoOut;
 import org.example.dto.dataFromDb.out.GetDataByGoodsListAndStockListDtoOut;
-import org.example.entity.dataFromDb.Assemble;
-import org.example.entity.dataFromDb.Goods;
-import org.example.entity.dataFromDb.Rest;
-import org.example.entity.dataFromDb.StockParam;
+import org.example.entity.data.from.db.Assemble;
+import org.example.entity.data.from.db.Goods;
+import org.example.entity.data.from.db.Rest;
+import org.example.entity.data.from.db.StockParam;
 import org.example.entity.forecast.ForecastTemplate;
 import org.example.entity.forecast.SetStockTT;
 import org.example.exception.DataNotValidException;
 import org.example.exception.NotEnoughDataException;
 import org.example.exception.RabbitNotAnswerException;
-import org.example.mapper.dataFromDb.in.GoodsInMapper;
-import org.example.mapper.dataFromDb.in.MoveInMapper;
-import org.example.mapper.dataFromDb.in.RestMapper;
-import org.example.mapper.dataFromDb.in.StockParamMapper;
+import org.example.mapper.data.from.db.in.GoodsInMapper;
+import org.example.mapper.data.from.db.in.MoveInMapper;
+import org.example.mapper.data.from.db.in.RestMapper;
+import org.example.mapper.data.from.db.in.StockParamMapper;
 import org.example.rabbitMQ.consumer.*;
-import org.example.repository.dataFromDb.AssembleSequenceRepository;
-import org.example.repository.dataFromDb.GoodsRepository;
+import org.example.repository.data.from.db.AssembleSequenceRepository;
+import org.example.repository.data.from.db.GoodsRepository;
 import org.example.repository.forecast.ForecastTemplateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -104,23 +104,6 @@ public class FromExternalDatabaseService {
             if (a.getValue().getChildGood() == null && a.getValue().getParentGood() != null)
                 a.getValue().getParentGood().remoteAssembleParentSet(a.getValue()); //TODO надо бы подтянуть недостающих детей но пока удаляем эту ветку
         //TODO возможна ситуация наоборот нет родителя - сделать позже
-
-//        forecastTemplate.getGoodsSet().forEach(g->{
-//            if (g.getAssembleChild()!=null) {
-//                System.out.println("ребенок - "+g.getAssembleChild().getChildGood().getCodArtic()+" родитель - "+ g.getAssembleChild().getParentGood().getCodArtic());
-//                System.out.println("________________________");
-//            }
-//            if (!g.getAssemblePerentSet().isEmpty()){
-//                System.out.println("Родитель --______________");
-//                g.getAssemblePerentSet().forEach(a->{
-//                    System.out.println("             родитель- "+a.getId()+" - "+ a.getParentGood().getCodArtic());
-//                    System.out.println("             ребенок++ "+a.getId()+" - "+ a.getChildGood().getCodArtic());
-//                    System.out.println("++++++++++++++++++++");
-//                });
-//            }
-//        });
-
-        //TODO flash?
         return forecastTemplate;
     }
 
@@ -130,13 +113,10 @@ public class FromExternalDatabaseService {
         if (forecastTemplate.getGoodsSet().isEmpty())
             throw new NotEnoughDataException("Not goods to compile for requesting move from external database ");
         List<Long> idStockList = listStockOnlyWithTip(forecastTemplate.getSetStockTTSet());
-
-        //     forecastTemplate.getSetStockTTSet().stream().filter(set -> !set.getStockTipSaleSet().isEmpty()).map(SetStockTT::getIdStock).toList();
         if (idStockList == null || idStockList.isEmpty())
             throw new NotEnoughDataException("Not specified stock to compile for requesting move from external database ");
         List<String> codeArticList = forecastTemplate.getGoodsSet().stream().map(Goods::getCodArtic).toList();
         String start = forecastTemplate.getStartAnalysis().format(DateTimeFormatter.ofPattern("MM/dd/yyyy"));
-        // String end=forecastTemplate.getEndAnalysis().format(DateTimeFormatter.ofPattern("MM/dd/yyyy"));
         String end = LocalDateTime.now().format(DateTimeFormatter.ofPattern("MM/dd/yyyy"));
 
         GeMoveByGoodsListAndStockListAndDataStartEndDtoOut getMove = new GeMoveByGoodsListAndStockListAndDataStartEndDtoOut(codeArticList, idStockList, start, end);
@@ -189,7 +169,6 @@ public class FromExternalDatabaseService {
             if(restList!=null && !restList.isEmpty())
                 for (Rest r: restList) g.addRest(r);
         }
-        //    forEach(g::addRest));
         return forecastTemplate;
     }
 
@@ -198,10 +177,8 @@ public class FromExternalDatabaseService {
         if (forecastTemplate.getGoodsSet().isEmpty())
             throw new NotEnoughDataException("Not goods to compile for requesting stockParam from external database ");
         List<Long> idStockList = listStockOnlyWithTip(forecastTemplate.getSetStockTTSet());
-        //       forecastTemplate.getSetStockTTSet().stream().filter(set -> !set.getStockTipSaleSet().isEmpty()).map(SetStockTT::getIdStock).toList();
         if (idStockList == null || idStockList.isEmpty())
             throw new NotEnoughDataException("Not specified stock to compile for requesting stockParam from external database ");
-        // List<String> codeArticList=forecastTemplate.getGoodsSet().stream().map(Goods::getCodArtic).toList();
         List<StockParamDtoIn> stockParamDtoIns = stockParamDao.getStockParamByGoodsAndStockList(
                 new GetDataByGoodsListAndStockListDtoOut(getCodeGoods(forecastTemplate.getGoodsSet()), idStockList));
         if (stockParamDtoIns == null) return forecastTemplate;
@@ -212,7 +189,6 @@ public class FromExternalDatabaseService {
             else
                 paramMap.put(p.codArtc(), new ArrayList<>(List.of(stockParamMapper.toStockParam(p))));
         });
-       // forecastTemplate.getGoodsSet().forEach(g -> paramMap.get(g.getCodArtic()).forEach(g::addStockParam));
         for (Goods g : forecastTemplate.getGoodsSet()) {
             List<StockParam> stockParamList=paramMap.get(g.getCodArtic());
             if(stockParamList!=null && !stockParamList.isEmpty())
