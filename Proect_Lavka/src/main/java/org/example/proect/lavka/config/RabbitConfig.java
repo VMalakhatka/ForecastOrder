@@ -23,9 +23,7 @@ public class RabbitConfig {
     public ConnectionFactory connectionFactory() {
         return new CachingConnectionFactory("rabbitmq");
     }
-//    public ConnectionFactory connectionFactory() {
-//        return new CachingConnectionFactory("localhost");
-//    }
+
 
     @Bean
     public AmqpAdmin amqpAdmin() {

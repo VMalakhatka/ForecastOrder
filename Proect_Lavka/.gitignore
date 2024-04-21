@@ -31,4 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
 .DS_Store
+vpn-config/
+pg_data/
