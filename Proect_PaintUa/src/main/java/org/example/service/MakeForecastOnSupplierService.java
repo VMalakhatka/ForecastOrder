@@ -169,7 +169,8 @@ public class MakeForecastOnSupplierService {
     }
 
     /**
-     *
+     *Считает сколько бы мы могли продать если бы на складе товар был все время
+     * и прибавляет минималку к прогнозу
      * @param forecastTemplate – шапка текущего прогноза
      */
     private void countNotSaleAndOrderAndMin(ForecastTemplate forecastTemplate) {
@@ -200,6 +201,15 @@ public class MakeForecastOnSupplierService {
         );
     }
 
+    /**
+     * На основе шаблона заказа - формирует шапку-шаблон нового прогноза
+     * если не задан диапазон дат прогноза - то за конец прогноза считается
+     * текущая дата - начало текущая - кол дней для прогноза
+     * @param template - шаблон на прогноз
+     * @param supplier - поставщик или уникальный номер документа в БД
+     * @return возвращает сформированную и сохраненную шапку для нового прогноза
+     * @throws NotEnoughDataException - если нет шаблонов для складов
+     */
     private ForecastTemplate saveTemplateToForecast(Template template, String supplier) throws NotEnoughDataException {
         ForecastTemplate forecastTemplate = new ForecastTemplate();
         forecastTemplate.setOrderForDay(template.getOrderForDay());
