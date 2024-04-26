@@ -6,7 +6,6 @@ import org.example.proect.lavka.dao.SclArtcDao;
 import org.example.proect.lavka.dto.*;
 import org.example.proect.lavka.entity.SclArtc;
 import org.example.proect.lavka.dao.SclMoveDao;
-import org.example.proect_lavka.dto.*;
 import org.example.proect.lavka.mapper.GoodsMapper;
 import org.example.proect.lavka.service.GoodsService;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
