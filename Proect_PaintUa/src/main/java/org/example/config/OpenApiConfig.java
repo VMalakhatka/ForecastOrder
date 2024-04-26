@@ -10,7 +10,7 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
 @OpenAPIDefinition(
         info = @Info(
                 title = "Example Api",
-                description = "For demonstration", version = "1.0.0",
+                description = "For forecast", version = "1.0.0",
                 contact = @Contact(
                         name = "Volodymyr Malakhatka",
                         email = "vmalakhatka@gmail.com",
